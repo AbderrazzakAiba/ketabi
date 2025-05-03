@@ -33,6 +33,8 @@ class StoreBookRequest extends FormRequest
             'quantite' => 'required|integer|min:1',
             'etat_liv' => ['nullable', 'string', Rule::in(array_column(BookStatus::cases(), 'value'))], // Consider using Enum
             'id_editor' => 'nullable|exists:editors,id_editor',
+            'image' => 'required|image|max:2048', // Max 2MB
+            'pdf' => 'required|mimes:pdf|max:10240', // Max 10MB
         ];
     }
 

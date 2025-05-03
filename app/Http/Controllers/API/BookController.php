@@ -45,6 +45,16 @@ class BookController extends Controller
 
         $validated = $request->validated(); // Validation is handled by the Form Request
 
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('public/images/books');
+        }
+
+        $pdfPath = null;
+        if ($request->hasFile('pdf')) {
+            $pdfPath = $request->file('pdf')->store('public/pdfs/books');
+        }
+
         // محاولة إيجاد كتاب بنفس العنوان
         $book = Book::where('title', $validated['title'])->first();
 
@@ -73,6 +83,8 @@ class BookController extends Controller
                 'quantite' => $validated['quantite'], // Store total quantity
                 'etat_liv' => $validated['etat_liv'] ?? \App\Enums\BookStatus::AVAILABLE, // Set default status
                 'id_editor' => $validated['id_editor'],
+                'image_path' => $imagePath,
+                'pdf_path' => $pdfPath,
             ]);
 
             for ($i = 0; $i < $validated['quantite']; $i++) { // Use quantite for number of copies
