@@ -43,13 +43,12 @@ class AuthController extends Controller
 
         } catch (Exception $e) {
             Log::error('Registration failed in controller: ' . $e->getMessage());
-            return response()->json(['message' => $e->getMessage()], 500);
-
+            // Return a generic error response with the exception message
+            return response()->json(['message' => 'فشل تسجيل المستخدم: ' . $e->getMessage()], 500);
         } catch (\Throwable $th) {
             // Temporary diagnostic for error clarity
-            return response()->json([
-                'message' => $th->getMessage(),
-            ], 500);
+            Log::error('Registration failed in controller: ' . $th->getMessage());
+            return response()->json(['message' => 'فشل تسجيل المستخدم: ' . $th->getMessage()], 500);
         }
     }
 

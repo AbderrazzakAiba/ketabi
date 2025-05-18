@@ -39,7 +39,7 @@ class UpdateBorrowRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'date_retour.date' => 'تاريخ الإرجاع يجب أن يكون تاريخاً صحيحاً.',
+            'return_date.date' => 'تاريخ الإرجاع يجب أن يكون تاريخاً صحيحاً.',
             'borrow_status.in' => 'حالة الإعارة المدخلة غير صالحة.',
         ];
     }

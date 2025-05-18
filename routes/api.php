@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('orders', OrderLivController::class);
 
     // User management routes
-    Route::prefix('users')->name('users.')->group(function () {
+    Route::middleware('auth:sanctum')->prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/status/{status}', [UserController::class, 'getUsersByStatus'])->name('byStatus');
         Route::get('/status/pending', [UserController::class, 'getPendingUsers'])->name('pending');
@@ -36,8 +36,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
         Route::patch('/{user}/status', [UserController::class, 'updateStatus'])->name('updateStatus');
-        Route::patch('/{user}/changer-status', [UserController::class, 'changerStatut'])->name('changerStatut'); // ✔️
+        Route::patch('/{user}/changer-status', [UserController::class, 'changerStatut'])->name('changerStatut');
     });
+
 
     // Role-specific views
     Route::get('/professors', [ProfessorController::class, 'index'])->name('professors.index');
@@ -54,6 +55,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/return', [BorrowController::class, 'returnBook'])->name('borrow.return');
     Route::get('/borrows', [BorrowController::class, 'index'])->name('borrow.index');
     Route::get('/user/borrows', [BorrowController::class, 'userBorrows'])->name('borrow.user');
+    Route::get('/borrows/status/{status}', [BorrowController::class, 'getByStatus'])->name('borrow.status');
+    Route::get('/borrows/type/{type}', [BorrowController::class, 'getByType'])->name('borrow.type');
+    Route::post('/borrows/{borrow}/extend', [BorrowController::class, 'requestExtension'])->name('borrow.extend');
+    Route::put('/borrows/{borrow}', [BorrowController::class, 'update'])->name('borrow.update');
     Route::get('/borrows/{borrow}', [BorrowController::class, 'show'])->name('borrow.show');
 });
 

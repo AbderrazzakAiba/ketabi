@@ -3,12 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule; // Import Rule
-use App\Enums\LoanType; // Import LoanType
-use Illuminate\Support\Facades\Auth; // Import Auth facade
-use App\Enums\UserStatus; // Import UserStatus
-use App\Models\Borrow; // Import Borrow model
-use App\Enums\UserRole; // Import UserRole enum
+use Illuminate\Validation\Rule;
+use App\Enums\LoanType;
+use App\Enums\BorrowStatus;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Borrow;
 
 class StoreBorrowRequest extends FormRequest
 {
@@ -17,10 +16,8 @@ class StoreBorrowRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // All authenticated users can initiate a borrow request if their account is approved
-        // Additional authorization logic can be added in the BorrowPolicy
-        $user = $this->user(); // Get the authenticated user
-        return $user && $user->isApproved(); // Check if user exists and is approved
+        // Check if the user is authenticated and approved
+        return Auth::check() && Auth::user()->status === \App\Enums\UserStatus::APPROVED;
     }
 
     /**
@@ -33,122 +30,63 @@ class StoreBorrowRequest extends FormRequest
         $user = Auth::user();
         $maxBorrows = 0;
 
-        // Determine max borrows based on user role
         switch ($user->role) {
-            case UserRole::STUDENT:
+            case \App\Enums\UserRole::STUDENT:
                 $maxBorrows = 3;
                 break;
-            case UserRole::PROFESSOR:
+            case \App\Enums\UserRole::PROFESSOR:
                 $maxBorrows = 5;
                 break;
-            case UserRole::EMPLOYEE:
-                $maxBorrows = 3; // Assuming employee limit is same as student for now
+            case \App\Enums\UserRole::EMPLOYEE:
+            case \App\Enums\UserRole::ADMIN:
+                $maxBorrows = 3;
                 break;
             default:
-                // Admin or other roles might have different limits or no limits
-                // For now, assume no borrowing for other roles via this request
                 $maxBorrows = 0;
                 break;
         }
 
-        $user = $this->user(); // Get the authenticated user
-
-        $maxBorrows = 0;
-        $allowedLoanTypes = array_column(LoanType::cases(), 'value'); // Default: all loan types allowed
-
-        // Determine max borrows and allowed loan types based on user role
-        switch ($user->role) {
-            case UserRole::STUDENT:
-                $maxBorrows = 3;
-                break;
-            case UserRole::PROFESSOR:
-                $maxBorrows = 5;
-                break;
-            case UserRole::EMPLOYEE:
-                $maxBorrows = 3; // Employee limit for borrowing
-                // Restrict employee loan types to IN_LIBRARY and EXTERNAL
-                $allowedLoanTypes = [LoanType::IN_LIBRARY->value, LoanType::EXTERNAL->value];
-                break;
-            // Admin might not typically borrow, or have a different limit/process.
-            // Assuming Admins can borrow with employee limit and types for now if needed.
-            case UserRole::ADMIN:
-                 $maxBorrows = 3; // Assuming Admin can borrow like an employee
-                 $allowedLoanTypes = [LoanType::IN_LIBRARY->value, LoanType::EXTERNAL->value]; // Assuming Admin borrowing is similar to employee
-                 break;
-            default:
-                // Other roles might not be allowed to borrow
-                $maxBorrows = 0;
-                $allowedLoanTypes = [];
-                break;
-        }
-
-        $user = $this->user(); // Get the authenticated user
-
-        $maxBorrows = 0;
-        $allowedLoanTypes = array_column(LoanType::cases(), 'value'); // Default: all loan types allowed
-
-        // Determine max borrows and allowed loan types based on user role
-        switch ($user->role) {
-            case UserRole::STUDENT:
-                $maxBorrows = 3;
-                break;
-            case UserRole::PROFESSOR:
-                $maxBorrows = 5;
-                break;
-            case UserRole::EMPLOYEE:
-                $maxBorrows = 3; // Employee limit for borrowing
-                // Restrict employee loan types to IN_LIBRARY and EXTERNAL
-                $allowedLoanTypes = [LoanType::IN_LIBRARY->value, LoanType::EXTERNAL->value];
-                break;
-            // Admin might not typically borrow, or have a different limit/process.
-            // Assuming Admins can borrow with employee limit and types for now if needed.
-            case UserRole::ADMIN:
-                 $maxBorrows = 3; // Assuming Admin can borrow like an employee
-                 $allowedLoanTypes = [LoanType::IN_LIBRARY->value, LoanType::EXTERNAL->value]; // Assuming Admin borrowing is similar to employee
-                 break;
-            default:
-                // Other roles might not be allowed to borrow
-                $maxBorrows = 0;
-                $allowedLoanTypes = [];
-                break;
-        }
-
-        return [
-            'copy_id' => [
-                'required',
-                'exists:copies,id_exemplaire',
-                // Add a custom rule to check borrowing limit
-                function ($attribute, $value, $fail) use ($user, $maxBorrows) {
-                    if ($maxBorrows > 0) {
-                        $currentBorrows = Borrow::where('id_User', $user->id_User)
-                                                ->whereNull('date_retour') // Assuming date_retour is null for active borrows
-                                                ->count();
-
-                        if ($currentBorrows >= $maxBorrows) {
-                            $fail("لا يمكنك استعارة أكثر من {$maxBorrows} كتب.");
-                        }
-                    } else {
-                         $fail("دور المستخدم الحالي غير مسموح له بالاستعارة.");
-                    }
-                },
+        $rules = [
+            'type' => ['required', Rule::in(array_column(LoanType::cases(), 'value'))],
+            'duration' => [
+                Rule::requiredIf(function () {
+                    return in_array(request('type'), [LoanType::EXTERNAL->value, LoanType::ONLINE_RETURN->value]);
+                }),
+                'nullable',
+                'integer',
+                'min:1',
+                'max:15',
             ],
-            'type' => ['required', Rule::in($allowedLoanTypes)], // Validate loan type based on allowed types
         ];
+
+        if (request('type') === LoanType::ONLINE_RETURN->value || request('type') === LoanType::ONLINE_DOWNLOAD->value) {
+            $rules['id_book'] = ['required', 'exists:books,id_book'];
+        } else {
+            $rules['copy_id'] = ['required', 'exists:copies,id_exemplaire'];
+        }
+
+        return $rules;
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
     public function messages(): array
     {
-        return [
-            'copy_id.required' => 'معرف النسخة مطلوب.',
-            'copy_id.exists' => 'النسخة المحددة غير موجودة.',
+        $messages = [
             'type.required' => 'نوع الإعارة مطلوب.',
             'type.in' => 'نوع الإعارة المحدد غير صالح.',
-            // Custom message for the borrowing limit rule is handled within the closure
+            'duration.required' => 'مدة الإعارة مطلوبة.',
+            'duration.integer' => 'مدة الإعارة يجب أن تكون عددًا صحيحًا.',
+            'duration.min' => 'يجب أن تكون مدة الإعارة أكبر من 0.',
+            'duration.max' => 'يجب ألا تتجاوز مدة الإعارة 15 يومًا.',
         ];
+
+        if (request('type') === LoanType::ONLINE_RETURN->value || request('type') === LoanType::ONLINE_DOWNLOAD->value) {
+            $messages['id_book.required'] = 'معرف الكتاب مطلوب.';
+            $messages['id_book.exists'] = 'الكتاب المحدد غير موجود.';
+        } else {
+            $messages['copy_id.required'] = 'معرف النسخة مطلوب.';
+            $messages['copy_id.exists'] = 'النسخة المحددة غير موجودة.';
+        }
+
+        return $messages;
     }
 }

@@ -4,24 +4,117 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Borrow;
 use App\Models\Copy;
-use App\Models\User; // Import User model
+use App\Models\User;
 use App\Enums\LoanType;
 use App\Enums\BorrowStatus;
-use App\Enums\UserRole; // Import UserRole
-use App\Enums\UserStatus; // Import UserStatus
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BorrowResource;
-use Illuminate\Validation\Rule; // Import Rule
-use Carbon\Carbon; // Import Carbon for date calculations
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Import the trait
-use App\Http\Requests\StoreBorrowRequest; // Import the Store Form Request
-use App\Http\Requests\UpdateBorrowRequest; // Import the Update Form Request
-use Illuminate\Support\Facades\Auth; // Import Auth facade
+use Illuminate\Validation\Rule;
+use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\Book;
+use App\Http\Requests\StoreBorrowRequest;
+use App\Http\Requests\UpdateBorrowRequest;
+use Illuminate\Support\Facades\Auth;
 
 class BorrowController extends Controller
 {
-    use AuthorizesRequests; // Use the trait
+    use AuthorizesRequests;
+
+    /**
+     * Request an extension for a borrow.
+     */
+    public function requestExtension(Request $request, Borrow $borrow)
+    {
+        // Check if the borrow is extendable
+        if (strtolower($borrow->type->value) !== LoanType::EXTERNAL->value && strtolower($borrow->type->value) !== LoanType::ONLINE_RETURN->value) {
+            Log::info('borrow->type: ' . $borrow->type->value);
+            Log::info('LoanType::ONLINE_RETURN->value: ' . LoanType::ONLINE_RETURN->value);
+            return response()->json(['message' => 'This borrow type is not extendable.'], 400);
+        }
+
+        // Check if the borrow is already returned or has a pending extension
+        if (strtolower($borrow->status->value) === BorrowStatus::RETURNED->value || strtolower($borrow->status->value) === BorrowStatus::PENDING_EXTENSION->value) {
+            return response()->json(['message' => 'This borrow cannot be extended.'], 400);
+        }
+
+        // Check if the borrow has already reached the maximum duration
+        $originalDuration = Carbon::parse($borrow->borrow_date)->diffInDays(Carbon::parse($borrow->due_date));
+        if ($originalDuration >= 15) {
+            return response()->json(['message' => 'This borrow cannot be extended further.'], 400);
+        }
+
+        // Validate the requested duration
+        $validated = $request->validate([
+            'duration' => 'required|integer|min:1',
+        ]);
+
+        $extensionDuration = $validated['duration'];
+        $totalDuration = $originalDuration + $extensionDuration;
+
+        if ($totalDuration > 15) {
+            return response()->json(['message' => 'The extension duration exceeds the maximum allowed duration (15 days).'], 400);
+        }
+
+        // Calculate the new due date
+        $newDueDate = Carbon::parse($borrow->borrow_date)->addDays($totalDuration);
+
+        // Update the borrow status and due date
+        $borrow->status = BorrowStatus::PENDING_EXTENSION->value;
+        $borrow->due_date = $newDueDate;
+        $borrow->duration = $totalDuration;
+        $borrow->save();
+
+        return response()->json(['message' => 'Extension requested successfully. Waiting for approval.'], 200);
+    }
+
+    /**
+     * Display a listing of the resource by type.
+     */
+    public function getByType(Request $request, $type)
+    {
+        // Validate the type
+        $allowedTypes = array_map(fn($case) => $case->value, LoanType::cases());
+        if (!in_array($type, $allowedTypes)) {
+            return response()->json(['message' => 'Invalid borrow type.'], 400);
+        }
+
+        // Admin or Employee can view all borrows, other users can view their own
+        $user = $request->user();
+        if ($user->isAdmin() || $user->role === \App\Enums\UserRole::EMPLOYEE) {
+            $borrows = Borrow::with(['user', 'copy.book'])->where('type', $type)->get();
+        } else {
+            $borrows = $user->borrows()->with(['user', 'copy.book'])->where('type', $type)->get();
+        }
+
+        return BorrowResource::collection($borrows);
+    }
+
+    /**
+     * Display a listing of the resource by status.
+     */
+    public function getByStatus(Request $request, $status)
+    {
+        // Validate the status
+        $allowedStatuses = array_map(fn($case) => $case->value, BorrowStatus::cases());
+        if (!in_array($status, $allowedStatuses)) {
+            return response()->json(['message' => 'Invalid borrow status.'], 400);
+        }
+
+        // Admin or Employee can view all borrows, other users can view their own
+        $user = $request->user();
+        if ($user->isAdmin() || $user->role === \App\Enums\UserRole::EMPLOYEE) {
+            $borrows = Borrow::with(['user', 'copy.book'])->where('status', $status)->get();
+        } else {
+            $borrows = $user->borrows()->with(['user', 'copy.book'])->where('status', $status)->get();
+        }
+
+        return BorrowResource::collection($borrows);
+    }
 
     /**
      * Display a listing of the resource.
@@ -33,7 +126,7 @@ class BorrowController extends Controller
 
         $user = $request->user(); // Get the authenticated user from the request
 
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() || $user->role === \App\Enums\UserRole::EMPLOYEE) {
             $borrows = Borrow::with(['user', 'copy.book'])->get();
         } else {
             $borrows = $user->borrows()->with(['user', 'copy.book'])->get();
@@ -55,8 +148,6 @@ class BorrowController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * This method will handle the initial borrow request/creation.
-     * Approval logic will be handled separately if needed.
      */
     public function store(StoreBorrowRequest $request) // Use the Form Request
     {
@@ -65,11 +156,23 @@ class BorrowController extends Controller
         $validated = $request->validated(); // Validation is handled by the Form Request
 
         // Find the copy
-        $copy = Copy::findOrFail($validated['copy_id']);
+        $copy = null;
+        if (isset($validated['copy_id'])) {
+            $copy = Copy::where('id_exemplaire', $validated['copy_id'])
+                ->where('etat_copy_liv', \App\Enums\CopyStatus::AVAILABLE)
+                ->first();
 
-        // Check copy status
-        if ($copy->etat_copy_liv !== \App\Enums\CopyStatus::AVAILABLE) {
-            return response()->json(['message' => 'هذه النسخة غير متاحة للاستعارة حاليًا.'], 400);
+            if (!$copy) {
+                return response()->json(['message' => 'هذه النسخة غير متاحة للاستعارة حاليًا.'], 400);
+            }
+
+            try {
+                $copy->etat_copy_liv = \App\Enums\CopyStatus::ON_LOAN;
+                $copy->save();
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Error updating copy status: ' . $e->getMessage());
+                return response()->json(['message' => 'حدث خطأ أثناء تحديث حالة النسخة.'], 500);
+            }
         }
 
         // Check borrowing limits based on user role
@@ -98,71 +201,81 @@ class BorrowController extends Controller
             return response()->json(['message' => "لقد وصلت إلى الحد الأقصى من الإعارات المسموح بها ({$maxBorrows} كتب)."], 400);
         }
 
-        // Determine due date and update copy status based on loan type
+        // Determine due date
         $dueDate = null;
-        $copyStatus = $copy->etat_copy_liv; // Default to current status
+        $duration = null;
 
-        switch ($validated['type']) {
-            case LoanType::EXTERNAL->value:
-                // External loan: set due date (e.g., 14 days) and mark copy as on loan
-                $dueDate = Carbon::now()->addDays(14);
-                $copyStatus = \App\Enums\CopyStatus::ON_LOAN;
-                break;
-            case LoanType::ONLINE_RETURN->value:
-                // Online loan with return: set due date (e.g., 7 days) and mark copy as on loan
-                $dueDate = Carbon::now()->addDays(7);
-                $copyStatus = \App\Enums\CopyStatus::ON_LOAN;
-                break;
-            case LoanType::IN_LIBRARY->value: // Corrected case name
-                // Instant internal loan: no due date, copy status remains available (or a temporary status if needed)
-                $dueDate = null;
-                // Copy status remains AVAILABLE or similar, as it's read inside and returned immediately.
-                // No change needed to $copyStatus if AVAILABLE is the default.
-                break;
-            case LoanType::ONLINE_DOWNLOAD->value: // Corrected case name
-                // Online loan without return: no due date, copy status remains available (or a 'DOWNLOADED' status if needed)
-                $dueDate = null;
-                // Copy status remains AVAILABLE or similar for permanent download.
-                // No change needed to $copyStatus if AVAILABLE is the default.
-                break;
-        } // Added missing closing brace for switch
+        if (isset($validated['duration'])) {
+            $duration = $validated['duration'];
+            $dueDate = Carbon::now()->addDays($duration);
+        } elseif ($validated['type'] === LoanType::IN_LIBRARY->value) {
+             // Instant internal loan: no due date, set return date to borrow date
+            $dueDate = now();
+        } elseif ($validated['type'] === LoanType::ONLINE_DOWNLOAD->value) {
+            // Online loan without return: no due date
+            $dueDate = null;
+        } else {
+            // Handle other loan types if needed
+            $dueDate = Carbon::now()->addDays(14); // Default duration
+        }
 
-        // Create the borrow record
-        $borrow = Borrow::create([
+        $borrowData = [
             'id_User' => $user->id_User,
-            'id_exemplaire' => $copy->id_exemplaire,
             'type' => $validated['type'],
             'status' => BorrowStatus::ACTIVE, // Set status to active upon creation
             'borrow_date' => now(),
             'due_date' => $dueDate, // Set due date
+            'duration' => $duration, // Store the duration
             'nbr_liv_empr' => $currentBorrowsCount + 1, // Update number of borrowed books
-        ]);
+        ];
+
+        if (isset($validated['copy_id'])) {
+            $borrowData['id_exemplaire'] = $validated['copy_id'];
+        }
+
+        if (isset($validated['id_book'])) {
+            $borrowData['id_book'] = $validated['id_book'];
+        }
+
+        // Create the borrow record
+        $borrow = Borrow::create($borrowData);
 
         // Update copy status if it changed
-        if ($copy->etat_copy_liv !== $copyStatus) {
-             $copy->etat_copy_liv = $copyStatus;
+        if ($copy && $copy->etat_copy_liv !== \App\Enums\CopyStatus::AVAILABLE) {
+             $copy->etat_copy_liv = \App\Enums\CopyStatus::ON_LOAN;
              $copy->save();
         }
 
         // Return the created borrow resource
-        return new BorrowResource($borrow->load(['user', 'copy.book']));
+        return (new BorrowResource($borrow->load(['user', 'copy.book'])))->response()->setStatusCode(201);
     }
 
     /**
      * Handle book return.
      */
-    public function returnBook(Request $request, Borrow $borrow) // Use Route Model Binding
+    public function returnBook(Request $request)
     {
-        // Authorization: Only Employee can return books
-        $this->authorize('returnBook', $borrow);
+        $validated = $request->validate([
+            'borrow_id' => 'required|exists:borrows,id_pret',
+        ]);
+
+        $borrow = Borrow::findOrFail($validated['borrow_id']);
 
         // Check if the borrow is already returned
         if ($borrow->status === BorrowStatus::RETURNED) {
             return response()->json(['message' => 'هذه الإعارة تم إرجاعها بالفعل.'], 400);
         }
 
-        // Find the associated copy
-        $copy = $borrow->copy;
+        $user = $request->user();
+
+        if ($user->role === UserRole::EMPLOYEE) {
+            //Allow Employee to return
+        } else {
+            return response()->json(['message' => 'غير مصرح للمستخدمين العاديين بإرجاع هذه الإعارة.'], 403);
+        }
+
+         // Find the associated copy
+         $copy = $borrow->copy;
 
         // Update borrow status and return date
         $borrow->status = BorrowStatus::RETURNED;
@@ -170,7 +283,7 @@ class BorrowController extends Controller
         $borrow->save();
 
         // Update copy status (only if it was marked as ON_LOAN)
-        if ($copy->etat_copy_liv === \App\Enums\CopyStatus::ON_LOAN) {
+        if ($copy && $copy->etat_copy_liv === \App\Enums\CopyStatus::ON_LOAN) {
              $copy->etat_copy_liv = \App\Enums\CopyStatus::AVAILABLE;
              $copy->save();
         }
@@ -188,6 +301,25 @@ class BorrowController extends Controller
         // Authorization and validation are handled by the Form Request
         $validated = $request->validated();
 
+        // Check if the request is to approve the extension
+        $user = $request->user();
+        if ($request->has('approve_extension') && $request->input('approve_extension') === true && $user->role === \App\Enums\UserRole::EMPLOYEE) {
+            // Check if the borrow is in PENDING_EXTENSION status
+            if (strtolower($borrow->status->value) !== BorrowStatus::PENDING_EXTENSION->value) {
+                return response()->json(['message' => 'This borrow is not pending extension.'], 400);
+            }
+
+            // Calculate the new due date
+            $newDueDate = Carbon::parse($borrow->borrow_date)->addDays($borrow->duration);
+
+            // Update the borrow status and due date
+            $borrow->status = BorrowStatus::ACTIVE->value;
+            $borrow->due_date = $newDueDate;
+            $borrow->save();
+
+            return new BorrowResource($borrow->load(['user', 'copy.book']));
+        }
+
         $borrow->update($validated);
 
         return new BorrowResource($borrow->load(['user', 'copy.book']));
@@ -198,14 +330,12 @@ class BorrowController extends Controller
      */
     public function destroy(Borrow $borrow) // Use Route Model Binding
     {
-        // Authorization: Only Employee can delete a borrow
-        $this->authorize('delete', $borrow);
-
         // Optional: Check if the borrow is active before deleting
         if ($borrow->status === BorrowStatus::ACTIVE) {
              return response()->json(['message' => 'لا يمكن حذف إعارة نشطة.'], 400);
         }
 
+        $this->authorize('delete', $borrow);
         $borrow->delete();
 
         return response()->json(['message' => 'Borrow deleted successfully.']);

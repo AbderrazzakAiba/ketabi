@@ -29,6 +29,8 @@ class StoreUserRequest extends FormRequest
             'password' => 'required|string|min:8', // Adjust min length as needed
             'status' => ['required', Rule::in(array_map(fn($case) => $case->value, UserStatus::cases()))], // Use UserStatus enum
             'role' => ['required', Rule::in(array_map(fn($case) => $case->value, UserRole::cases()))],     // Use UserRole enum
+            'lieu_de_naissance' => ['nullable', 'string', 'max:255'], // Add validation for lieu_de_naissance
+            'date_de_naissance' => ['nullable', 'date'], // Add validation for date_de_naissance
         ];
     }
 }

@@ -27,8 +27,8 @@ class StoreBookRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'auteur' => 'required|string|max:255',
-            'num_page' => 'nullable|integer',
-            'num_RGE' => 'nullable|string|max:255',
+            'num_page' => 'nullable|integer|min:0', // Allow nullable positive integers
+            'num_RGE' => 'nullable|integer|min:0', // Allow nullable positive integers
             'category' => 'nullable|string|max:255',
             'quantite' => 'required|integer|min:1',
             'etat_liv' => ['nullable', 'string', Rule::in(array_column(BookStatus::cases(), 'value'))], // Consider using Enum

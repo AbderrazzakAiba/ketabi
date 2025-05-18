@@ -11,6 +11,7 @@ use App\Http\Requests\StoreOrderLivRequest; // Import the Store Form Request
 use App\Http\Requests\UpdateOrderLivRequest; // Import the Update Form Request
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Import the trait
 use App\Models\OrderLiv; // Import OrderLiv model
+use App\Models\Book; // Import Book model
 
 class OrderLivController extends Controller
 {
@@ -42,7 +43,27 @@ class OrderLivController extends Controller
 
         $validated = $request->validated();
 
-        $orderLiv = $this->orderLivRepo->create($validated);
+        // Create the book
+        $book = Book::create([
+            'title' => $validated['title'],
+            'auteur' => $validated['auteur'],
+            'num_page' => $validated['num_page'],
+            'num_RGE' => $validated['num_RGE'],
+            'category' => $validated['category'],
+            'image_path' => $validated['image_path'] ?? null,
+            'pdf_path' => $validated['pdf_path'] ?? null,
+            'quantite' => $validated['quantite'],
+        ]);
+
+        $orderData = [
+            'id_User' => $validated['id_user'],
+            'id_book' => $book->id_book,
+            'order_date' => $validated['order_date'],
+            'status' => $validated['status'],
+            'quantite' => $validated['quantite'],
+        ];
+
+        $orderLiv = $this->orderLivRepo->create($orderData);
 
         // استخدام Resource لتنسيق الاستجابة
         return new OrderLivResource($orderLiv);
@@ -64,7 +85,7 @@ class OrderLivController extends Controller
     }
 
     // حذف الطلب
-    public function destroy(OrderLiv $orderLiv) // Use Route Model Binding
+    public function destroy(UpdateOrderLivRequest $request, OrderLiv $orderLiv) // Use Route Model Binding
     {
         $this->authorize('delete', $orderLiv); // Add authorization check
 

@@ -32,7 +32,7 @@ class AuthService
         $role = UserRole::from($validatedData['role']);
 
         $userData = Arr::only($validatedData, [
-            'first_name', 'last_name', 'adress', 'city', 'phone_number', 'email'
+            'first_name', 'last_name', 'adress', 'city', 'phone_number', 'email', 'lieu_de_naissance', 'date_de_naissance'
         ]);
         $userData['password'] = Hash::make($validatedData['password']);
         $userData['role'] = $role;
@@ -69,7 +69,7 @@ class AuthService
 
         } catch (Exception $e) {
             DB::rollBack();
-            throw new Exception('فشل تسجيل المستخدم. يرجى المحاولة مرة أخرى.');
+            throw new Exception('فشل تسجيل المستخدم: ' . $e->getMessage() . ' يرجى المحاولة مرة أخرى.');
         }
     }
 }

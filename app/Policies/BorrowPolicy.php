@@ -16,7 +16,7 @@ class BorrowPolicy
     public function viewAny(User $user): bool
     {
         // Admin can view all borrows, other authenticated users can view their own
-        return $user !== null;
+        return $user->isAdmin() || $user->isEmployee(); // Allow admins and employees
     }
 
     /**
@@ -25,7 +25,7 @@ class BorrowPolicy
     public function view(User $user, Borrow $borrow): bool
     {
         // Admin can view any borrow, other users can view their own
-        return $user->isAdmin() || $user->id_User === $borrow->id_User;
+        return $user->isAdmin() || $user->isEmployee(); // Allow admins and employees
     }
 
     /**

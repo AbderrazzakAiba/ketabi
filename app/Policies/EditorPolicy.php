@@ -14,8 +14,8 @@ class EditorPolicy
      */
     public function viewAny(User $user): bool
     {
-        // Only Admin can view any editors
-        return $user->isAdmin();
+        // Allow Admin and Employee to view any editors
+        return $user->isAdmin() || $user->isEmployee();
     }
 
     /**
@@ -23,8 +23,8 @@ class EditorPolicy
      */
     public function view(User $user, Editor $editor): bool
     {
-        // Only Admin can view a specific editor
-        return $user->isAdmin();
+        // Allow Admin and Employee to view a specific editor
+        return $user->isAdmin() || $user->isEmployee();
     }
 
     /**
@@ -32,8 +32,8 @@ class EditorPolicy
      */
     public function create(User $user): bool
     {
-        // Only Admin can create editors
-        return $user->isAdmin();
+        // Allow Admin and Employee to create editors
+        return $user->isAdmin() || $user->isEmployee();
     }
 
     /**
@@ -41,8 +41,8 @@ class EditorPolicy
      */
     public function update(User $user, Editor $editor): bool
     {
-        // Only Admin can update editors
-        return $user->isAdmin();
+        // Allow Admin and Employee to update editors
+        return $user->isAdmin() || $user->isEmployee();
     }
 
     /**
@@ -50,8 +50,8 @@ class EditorPolicy
      */
     public function delete(User $user, Editor $editor): bool
     {
-        // Only Admin can delete editors
-        return $user->isAdmin();
+        // Allow Admin and Employee to delete editors
+        return $user->isAdmin() || $user->isEmployee();
     }
 
     /**
@@ -59,8 +59,8 @@ class EditorPolicy
      */
     public function restore(User $user, Editor $editor): bool
     {
-        // Only Admin can restore editors
-        return $user->isAdmin();
+        // Allow Admin and Employee to restore editors
+        return $user->isAdmin() || $user->isEmployee();
     }
 
     /**
@@ -68,7 +68,7 @@ class EditorPolicy
      */
     public function forceDelete(User $user, Editor $editor): bool
     {
-        // Only Admin can permanently delete editors
-        return $user->isAdmin();
+        // Allow Admin and Employee to permanently delete editors
+        return $user->isAdmin() || $user->isEmployee();
     }
 }

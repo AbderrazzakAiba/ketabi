@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Import the trait
 use App\Http\Resources\BookResource; // Import BookResource
 use App\Http\Requests\StoreBookRequest; // Import the Store Form Request
 use App\Http\Requests\UpdateBookRequest; // Import the Update Form Request
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -47,12 +48,14 @@ class BookController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('public/images/books');
+            $imagePath = $request->file('image')->store('public/images/books', 'public');
+            $imagePath = Storage::url($imagePath);
         }
 
         $pdfPath = null;
         if ($request->hasFile('pdf')) {
-            $pdfPath = $request->file('pdf')->store('public/pdfs/books');
+            $pdfPath = $request->file('pdf')->store('public/pdfs/books', 'public');
+            $pdfPath = Storage::url($pdfPath);
         }
 
         // محاولة إيجاد كتاب بنفس العنوان

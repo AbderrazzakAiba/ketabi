@@ -19,14 +19,16 @@ return new class extends Migration
             $table->string('type')->default(\App\Enums\LoanType::EXTERNAL->value); // Corresponds to type_empr, using Enum
             $table->string('status')->default(\App\Enums\BorrowStatus::ACTIVE->value); // Corresponds to etat_empr, using Enum
             $table->integer('nbr_liv_empr')->nullable(); // Adding back based on user request (Number of books borrowed by user at this time?)
+            $table->integer('duration')->nullable(); // Loan duration in days
+            $table->foreignId('id_book')->nullable()->constrained('books', 'id_book')->onDelete('cascade');
 
             // Foreign key for User (Utilisateur)
             $table->foreignId('id_User')
-                  ->constrained('users', 'id_User') // References id_User in users table
-                  ->onDelete('cascade');
+                ->constrained('users', 'id_User') // References id_User in users table
+                ->onDelete('cascade');
 
             // Foreign key for Copy (Exemplaire)
-            $table->foreignId('id_exemplaire')
+            $table->foreignId('id_exemplaire')->nullable()
                   ->constrained('copies', 'id_exemplaire') // References id_exemplaire in copies table (corrected table name)
                   ->onDelete('cascade');
 

@@ -48,6 +48,8 @@ class User extends Authenticatable
         'password',
         'role',   // Add role
         'status', // Add status
+        'lieu_de_naissance', // Add lieu_de_naissance
+        'date_de_naissance', // Add date_de_naissance
     ];
 
     /**
@@ -72,6 +74,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,     // Cast role to UserRole Enum
             'status' => UserStatus::class, // Cast status to UserStatus Enum
+            'date_de_naissance' => 'date', // Cast date_de_naissance to date
         ];
     }
 
@@ -154,4 +157,4 @@ class User extends Authenticatable
     {
         return $this->status === UserStatus::APPROVED;
     }
-}  
+}

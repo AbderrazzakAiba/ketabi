@@ -12,6 +12,11 @@ class Borrow extends Model
 {
     use HasFactory; // Add HasFactory trait
 
+    public function getRouteKeyName()
+    {
+        return 'id_pret';
+    }
+
     protected $table = 'borrows';
     protected $primaryKey = 'id_pret'; // Correct Primary Key
     // Remove public $timestamps = false; as migration has timestamps
@@ -25,6 +30,8 @@ class Borrow extends Model
         'due_date',         // Add due_date
         'status',           // Correct column name
         'nbr_liv_empr',     // Add based on previous decision
+        'duration',
+        'id_book',
     ];
 
     protected $casts = [

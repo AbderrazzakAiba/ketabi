@@ -19,7 +19,12 @@ class UserResource extends JsonResource
             'id' => $this->id_User, // افترضنا أن المفتاح الرئيسي هو id_User
             'name' => $this->name,
             'email' => $this->email,
-            'status' => UserStatus::from($this->status)->getDescription(), // استخدام getDescription للحصول على الوصف من Enum
+            'status' => [
+    'value' => $this->status->value,
+    'label' => $this->status->getDescription(),
+            ],
+
+    
             'role' => $this->role,
             'created_at' => $this->created_at->toDateTimeString(), // التأكد من تحويل التاريخ إلى تنسيق يمكن قراءته
             'updated_at' => $this->updated_at->toDateTimeString(),

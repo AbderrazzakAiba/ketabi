@@ -40,6 +40,8 @@ class Book extends Model
         'quantite',
         'etat_liv',
         'id_editor', // Foreign key
+        'image_path', // ✅ أضف هذا
+         'pdf_path',
     ];
 
     /**
