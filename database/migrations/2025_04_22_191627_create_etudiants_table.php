@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->string('matricule')->unique();
             $table->string('level'); // Corresponds to Level
-            $table->date('academic_year'); // Corresponds to Academic_year
+            $table->string('academic_year'); // Corresponds to Academic_year
             $table->string('speciality'); // Corresponds to Spéciality
 
             // No need for separate id or timestamps if it's just extending users table

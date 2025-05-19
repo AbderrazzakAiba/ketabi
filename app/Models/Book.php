@@ -39,9 +39,9 @@ class Book extends Model
         'category',
         'quantite',
         'etat_liv',
-        'id_editor', // Foreign key
-        'image_path', // ✅ أضف هذا
-         'pdf_path',
+        'id_editor',
+        'image_path',
+        'pdf_path',
     ];
 
     /**

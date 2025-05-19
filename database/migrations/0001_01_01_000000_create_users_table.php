@@ -23,9 +23,11 @@ return new class extends Migration
             $table->string('status')->default(\App\Enums\UserStatus::PENDING->value); // Status for approval, using Enum
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password'); // Corresponds to pass_word in Login
+            $table->string('lieu_de_naissance')->nullable(); // Place of birth
+            $table->date('date_de_naissance')->nullable(); // Date of birth
             $table->rememberToken();
             $table->timestamps();
-            // Removed 'nom', 'adresse' (old names), 'date_naissance'
+            // Removed 'nom', 'adresse' (old names)
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

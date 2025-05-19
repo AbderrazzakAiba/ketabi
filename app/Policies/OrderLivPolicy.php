@@ -41,8 +41,8 @@ class OrderLivPolicy
      */
     public function update(User $user, OrderLiv $orderLiv): bool
     {
-        // Allow Admin and Employee to update order deliveries
-        return $user->isAdmin() || $user->isEmployee();
+        // Allow only Admin to update order deliveries
+        return $user->isAdmin();
     }
 
     /**

@@ -25,6 +25,10 @@ class AuthService
      */
     public function registerUser(array $validatedData): User
     {
+        if ($validatedData['role'] === UserRole::ADMIN->value && User::where('role', UserRole::ADMIN)->exists()) {
+            throw ValidationException::withMessages(['role' => 'لا يمكن إنشاء أكثر من حساب واحد بدور مسؤول.']);
+        }
+
         if (empty($validatedData['role']) || !in_array($validatedData['role'], array_column(UserRole::cases(), 'value'))) {
             throw ValidationException::withMessages(['role' => 'الدور المحدد غير صالح.']);
         }
@@ -36,7 +40,7 @@ class AuthService
         ]);
         $userData['password'] = Hash::make($validatedData['password']);
         $userData['role'] = $role;
-        $userData['status'] = UserStatus::PENDING;
+        $userData['status'] = $role === UserRole::ADMIN ? UserStatus::APPROVED : UserStatus::PENDING;
 
         DB::beginTransaction();
 

@@ -41,27 +41,27 @@ class RegisterUserRequest extends FormRequest
 
             'level'         => 'sometimes|required_if:role,' . UserRole::STUDENT->value . '|string|max:255',
             'academic_year' => [
-                              'sometimes',
-                             'required_if:role,' . UserRole::STUDENT->value,
-                            'regex:/^20\d{2}-20\d{2}$/',
-                              function ($attribute, $value, $fail) {
-                              [$start, $end] = explode('-', $value);
+                'sometimes',
+                'required_if:role,' . UserRole::STUDENT->value,
+                'regex:/^20\d{2}-20\d{2}$/',
+                function ($attribute, $value, $fail) {
+                    [$start, $end] = explode('-', $value);
 
-                               $startYear = (int) $start;
-                               $endYear = (int) $end;
+                    $startYear = (int) $start;
+                    $endYear = (int) $end;
 
-                                $startSuffix = (int) substr($start, 2); // آخر رقمين من السنة الأولى
-                                $endSuffix = (int) substr($end, 2);     // آخر رقمين من السنة الثانية
+                    $startSuffix = (int) substr($start, 2); // آخر رقمين من السنة الأولى
+                    $endSuffix = (int) substr($end, 2);     // آخر رقمين من السنة الثانية
 
-                                if ($startSuffix < 24) {
-                                     return $fail('يجب أن لا تقل السنة الأولى عن 2024.');
-                               }
+                    if ($startSuffix < 24) {
+                        return $fail('يجب أن لا تقل السنة الأولى عن 2024.');
+                    }
 
-                               if ($endSuffix !== $startSuffix + 1) {
-                                       return $fail('السنة الثانية يجب أن تساوي السنة الأولى زائد 1.');
-                               }
-                               },
-                              ],
+                    if ($endSuffix !== $startSuffix + 1) {
+                        return $fail('السنة الثانية يجب أن تساوي السنة الأولى زائد 1.');
+                    }
+                },
+            ],
             'speciality'    => 'sometimes|required_if:role,' . UserRole::STUDENT->value . '|string|max:255',
             'matricule'     => ['sometimes', 'required_if:role,' . UserRole::STUDENT->value, 'digits:12', 'numeric', 'unique:etudiants,matricule'], // Ensure matricule is 12 digits and numeric
         ];

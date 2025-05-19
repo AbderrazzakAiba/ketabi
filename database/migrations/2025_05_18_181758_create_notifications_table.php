@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('notifications');
-
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sender_id')->nullable()->constrained('users')->onDelete('SET NULL');
             $table->foreignId('recipient_id')->nullable()->constrained('users')->onDelete('SET NULL');
             $table->text('message');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

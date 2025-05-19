@@ -26,6 +26,8 @@ return new class extends Migration
                   ->constrained('editors', 'id_editor') // References id_editor in editors table
                   ->onDelete('cascade'); // Optional: delete books if editor is deleted
 
+            $table->string('image_path')->nullable(); // Path to the book's image
+            $table->string('pdf_path')->nullable(); // Path to the book's PDF
             $table->timestamps();
         });
     }

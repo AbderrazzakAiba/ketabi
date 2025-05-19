@@ -16,7 +16,6 @@ class OrderLiv extends Model
 
     protected $fillable = [
         'id_User',      // Correct foreign key name
-        'id_book',      // Correct foreign key name
         'order_date',   // Correct column name
         'status',       // Correct column name
     ];
@@ -29,12 +28,5 @@ class OrderLiv extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_User', 'id_User'); // Correct keys
-    }
-
-    public function book(): BelongsTo
-
-
-    {
-        return $this->belongsTo(Book::class, 'id_book', 'id_book'); // Correct keys
     }
 }

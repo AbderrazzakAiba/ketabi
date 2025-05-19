@@ -33,8 +33,9 @@ class AuthController extends Controller
 
             Log::info('Register route hit! User ID: ' . $user->id_User);
 
+            $message = $user->role === UserRole::ADMIN ? 'تم إنشاء حساب المسؤول بنجاح.' : 'تم إنشاء الحساب بنجاح. الحساب قيد المراجعة للموافقة.';
             return response()->json([
-                'message' => 'تم إنشاء الحساب بنجاح. الحساب قيد المراجعة للموافقة.',
+                'message' => $message,
                 'user_id' => $user->id_User
             ], 201);
 

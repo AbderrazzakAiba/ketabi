@@ -32,6 +32,7 @@ class Borrow extends Model
         'nbr_liv_empr',     // Add based on previous decision
         'duration',
         'id_book',
+        'original_duration',
     ];
 
     protected $casts = [

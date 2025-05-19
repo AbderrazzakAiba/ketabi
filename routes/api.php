@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('copies', CopyController::class);
     Route::apiResource('editors', EditorController::class);
     Route::apiResource('orders', OrderLivController::class);
+    Route::patch('/orders/{order}/approve', [OrderLivController::class, 'approve'])->name('orders.approve');
 
     // User management routes
     Route::middleware('auth:sanctum')->prefix('users')->name('users.')->group(function () {
@@ -60,6 +61,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/borrows/{borrow}/extend', [BorrowController::class, 'requestExtension'])->name('borrow.extend');
     Route::put('/borrows/{borrow}', [BorrowController::class, 'update'])->name('borrow.update');
     Route::get('/borrows/{borrow}', [BorrowController::class, 'show'])->name('borrow.show');
+
+    // Notification routes
+    Route::get('/notifications', [\App\Http\Controllers\API\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications', [\App\Http\Controllers\API\NotificationController::class, 'store'])->name('notifications.store');
 });
 
 // Fallback route for 404 API requests

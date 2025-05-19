@@ -32,7 +32,7 @@ class BorrowController extends Controller
     {
         // Check if the borrow is extendable
         if (strtolower($borrow->type->value) !== LoanType::EXTERNAL->value && strtolower($borrow->type->value) !== LoanType::ONLINE_RETURN->value) {
-            Log::info('borrow->type: ' . $borrow->type->value);
+            Log::info('borrow->type: ' . $borrow->type);
             Log::info('LoanType::ONLINE_RETURN->value: ' . LoanType::ONLINE_RETURN->value);
             return response()->json(['message' => 'This borrow type is not extendable.'], 400);
         }
@@ -43,7 +43,7 @@ class BorrowController extends Controller
         }
 
         // Check if the borrow has already reached the maximum duration
-        $originalDuration = Carbon::parse($borrow->borrow_date)->diffInDays(Carbon::parse($borrow->due_date));
+        $originalDuration = $borrow->original_duration;
         if ($originalDuration >= 15) {
             return response()->json(['message' => 'This borrow cannot be extended further.'], 400);
         }
@@ -61,7 +61,7 @@ class BorrowController extends Controller
         }
 
         // Calculate the new due date
-        $newDueDate = Carbon::parse($borrow->borrow_date)->addDays($totalDuration);
+        $newDueDate = Carbon::parse($borrow->borrow_date)->addDays($borrow->original_duration + $validated['duration']);
 
         // Update the borrow status and due date
         $borrow->status = BorrowStatus::PENDING_EXTENSION->value;
@@ -197,6 +197,15 @@ class BorrowController extends Controller
                  break;
         }
 
+        // Check if the user has any overdue borrows
+        $overdueBorrows = $user->borrows()
+            ->where('status', BorrowStatus::OVERDUE)
+            ->count();
+
+        if ($overdueBorrows > 0) {
+            return response()->json(['message' => 'لا يمكنك استعارة كتاب جديد حتى تقوم بإرجاع الكتب المتأخرة.'], 400);
+        }
+
         if ($currentBorrowsCount >= $maxBorrows) {
             return response()->json(['message' => "لقد وصلت إلى الحد الأقصى من الإعارات المسموح بها ({$maxBorrows} كتب)."], 400);
         }
@@ -226,6 +235,7 @@ class BorrowController extends Controller
             'borrow_date' => now(),
             'due_date' => $dueDate, // Set due date
             'duration' => $duration, // Store the duration
+            'original_duration' => $duration, // Store the original duration
             'nbr_liv_empr' => $currentBorrowsCount + 1, // Update number of borrowed books
         ];
 
@@ -318,17 +328,30 @@ class BorrowController extends Controller
             $borrow->save();
 
             return new BorrowResource($borrow->load(['user', 'copy.book']));
+        } else if ($request->has('approve_extension') && $request->input('approve_extension') === false && $user->role === \App\Enums\UserRole::EMPLOYEE) {
+            // Check if the borrow is in PENDING_EXTENSION status
+            if (strtolower($borrow->status->value) !== BorrowStatus::PENDING_EXTENSION->value) {
+                return response()->json(['message' => 'This borrow is not pending extension.'], 400);
+            }
+
+            // Update the borrow status to ACTIVE
+            $borrow->status = BorrowStatus::ACTIVE->value;
+            $borrow->due_date = $borrow->original_due_date;
+            $borrow->duration = $borrow->original_duration;
+            $borrow->save();
+
+            return new BorrowResource($borrow->load(['user', 'copy.book']));
         }
 
         $borrow->update($validated);
 
-        return new BorrowResource($borrow->load(['user', 'copy.book']));
-    }
+         return new BorrowResource($borrow->load(['user', 'copy.book']));
+     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Borrow $borrow) // Use Route Model Binding
+     /**
+      * Remove the specified resource from storage.
+      */
+     public function destroy(Borrow $borrow) // Use Route Model Binding
     {
         // Optional: Check if the borrow is active before deleting
         if ($borrow->status === BorrowStatus::ACTIVE) {

@@ -16,11 +16,6 @@ return new class extends Migration
             $table->date('order_date'); // Corresponds to date_demande
             $table->string('status')->default(\App\Enums\OrderStatus::PENDING->value); // Corresponds to etat_demande, using Enum
 
-            // Foreign key for the book being ordered
-            $table->foreignId('id_book')
-                  ->constrained('books', 'id_book') // References id_book in books table
-                  ->onDelete('cascade'); // Or set null if order should remain if book deleted
-
             // Foreign key for the employee (User) who placed the order
             // Assuming only employees can place orders based on typical workflow
             $table->foreignId('id_User') // Employee's User ID

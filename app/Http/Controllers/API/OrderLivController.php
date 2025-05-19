@@ -12,6 +12,7 @@ use App\Http\Requests\UpdateOrderLivRequest; // Import the Update Form Request
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Import the trait
 use App\Models\OrderLiv; // Import OrderLiv model
 use App\Models\Book; // Import Book model
+use App\Http\Requests\ApproveOrderLivRequest;
 
 class OrderLivController extends Controller
 {
@@ -43,24 +44,15 @@ class OrderLivController extends Controller
 
         $validated = $request->validated();
 
-        // Create the book
-        $book = Book::create([
+        $orderData = [
+            'id_User' => auth()->guard('sanctum')->user()->id_User,
             'title' => $validated['title'],
             'auteur' => $validated['auteur'],
-            'num_page' => $validated['num_page'],
-            'num_RGE' => $validated['num_RGE'],
             'category' => $validated['category'],
-            'image_path' => $validated['image_path'] ?? null,
-            'pdf_path' => $validated['pdf_path'] ?? null,
             'quantite' => $validated['quantite'],
-        ]);
+            'order_date' => now(),
+            'status' => OrderStatus::PENDING,
 
-        $orderData = [
-            'id_User' => $validated['id_user'],
-            'id_book' => $book->id_book,
-            'order_date' => $validated['order_date'],
-            'status' => $validated['status'],
-            'quantite' => $validated['quantite'],
         ];
 
         $orderLiv = $this->orderLivRepo->create($orderData);
@@ -100,5 +92,16 @@ class OrderLivController extends Controller
         }
 
         return response()->json(null, 204);
+    }
+
+    public function approve(ApproveOrderLivRequest $request, OrderLiv $orderLiv)
+    {
+        $this->authorize('update', $orderLiv); // Add authorization check
+
+        $validated = $request->validated();
+
+        $orderLiv = $this->orderLivRepo->update($orderLiv->id, $validated);
+
+        return new OrderLivResource($orderLiv);
     }
 }
