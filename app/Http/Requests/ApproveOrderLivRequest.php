@@ -14,7 +14,7 @@ class ApproveOrderLivRequest extends FormRequest
     public function authorize(): bool
     {
         // Only admins can approve or reject requests
-        return auth()->guard('sanctum')->user()->role === 'admin';
+        return ($this->user() instanceof \App\Models\User) && $this->user()->isAdmin();
     }
 
     /**
@@ -25,20 +25,14 @@ class ApproveOrderLivRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', 'string', Rule::in([OrderStatus::APPROVED->value, OrderStatus::REJECTED->value])],
+            'status' => ['required',  Rule::in([OrderStatus::APPROVED->value, OrderStatus::REJECTED->value])],
         ];
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
     public function messages(): array
     {
         return [
             'status.required' => 'حالة الطلب مطلوبة',
-            'status.string' => 'حالة الطلب يجب أن تكون نصاً',
             'status.in' => 'حالة الطلب المدخلة غير صالحة. يجب أن تكون "approved" أو "rejected".',
         ];
     }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources; // Correct namespace for Resource
 
+namespace App\Http\Resources;
+
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CopyResource extends JsonResource
@@ -15,14 +17,10 @@ class CopyResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id_exemplaire, // Use correct primary key
-            'purchase_date' => $this->date_achat, // Use correct attribute name
-            'status' => $this->etat_copy_liv, // Use correct attribute name
+            'id' => $this->id_exemplaire,
             'book_id' => $this->id_book,
-            // Optionally load book information
-            // 'book' => new BookResource($this->whenLoaded('book')),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'status' => $this->etat_copy_liv,
+            'book' => new BookResource($this->whenLoaded('book')),
         ];
     }
 }

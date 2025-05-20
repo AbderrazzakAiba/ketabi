@@ -50,6 +50,14 @@ class User extends Authenticatable
         'status', // Add status
         'lieu_de_naissance', // Add lieu_de_naissance
         'date_de_naissance', // Add date_de_naissance
+        'mail_mailer',
+        'mail_host',
+        'mail_port',
+        'mail_username',
+        'mail_password',
+        'mail_encryption',
+        'mail_from_address',
+        'mail_from_name',
     ];
 
     /**
@@ -126,12 +134,12 @@ class User extends Authenticatable
     // Helper methods to check roles easily
     public function isAdmin(): bool
     {
-        return $this->role === UserRole::ADMIN;
+        return strtolower((string)$this->role->value) === strtolower(UserRole::ADMIN->value);
     }
 
     public function isEmployee(): bool
     {
-        return $this->role === UserRole::EMPLOYEE;
+        return strtolower((string)$this->role->value) === strtolower(UserRole::EMPLOYEE->value);
     }
 
     public function isStudent(): bool

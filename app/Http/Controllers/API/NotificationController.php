@@ -48,6 +48,19 @@ class NotificationController extends Controller
             'message' => $validated['message'],
         ]);
 
+        // Send email notification
+        if ($notification->recipient_id) {
+            $recipient = \App\Models\User::find($notification->recipient_id);
+            if ($recipient) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($recipient->email)->send(new \App\Mail\NotificationCreated($notification));
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Error sending email: ' . $e->getMessage());
+                    return response()->json(['message' => 'Failed to send notification email.'], 500);
+                }
+            }
+        }
+
         return new NotificationResource($notification);
     }
 }

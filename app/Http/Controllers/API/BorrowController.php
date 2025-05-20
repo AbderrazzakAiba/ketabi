@@ -48,28 +48,23 @@ class BorrowController extends Controller
             return response()->json(['message' => 'This borrow cannot be extended further.'], 400);
         }
 
-        // Validate the requested duration
-        $validated = $request->validate([
-            'duration' => 'required|integer|min:1',
-        ]);
+        // Calculate the maximum extension duration
+        $maxExtensionDuration = 15 - $originalDuration;
 
-        $extensionDuration = $validated['duration'];
-        $totalDuration = $originalDuration + $extensionDuration;
-
-        if ($totalDuration > 15) {
-            return response()->json(['message' => 'The extension duration exceeds the maximum allowed duration (15 days).'], 400);
+        if ($maxExtensionDuration <= 0) {
+            return response()->json(['message' => 'This borrow cannot be extended further.'], 400);
         }
 
         // Calculate the new due date
-        $newDueDate = Carbon::parse($borrow->borrow_date)->addDays($borrow->original_duration + $validated['duration']);
+        $newDueDate = Carbon::parse($borrow->borrow_date)->addDays($borrow->original_duration + $maxExtensionDuration);
 
         // Update the borrow status and due date
         $borrow->status = BorrowStatus::PENDING_EXTENSION->value;
         $borrow->due_date = $newDueDate;
-        $borrow->duration = $totalDuration;
+        $borrow->duration = $borrow->original_duration + $maxExtensionDuration;
         $borrow->save();
 
-        return response()->json(['message' => 'Extension requested successfully. Waiting for approval.'], 200);
+        return response()->json(['message' => 'Extension requested successfully. Waiting for approval. The extension duration is ' . $maxExtensionDuration . ' days.'], 200);
     }
 
     /**
@@ -336,7 +331,7 @@ class BorrowController extends Controller
 
             // Update the borrow status to ACTIVE
             $borrow->status = BorrowStatus::ACTIVE->value;
-            $borrow->due_date = $borrow->original_due_date;
+            $borrow->due_date = Carbon::parse($borrow->borrow_date)->addDays($borrow->original_duration);
             $borrow->duration = $borrow->original_duration;
             $borrow->save();
 

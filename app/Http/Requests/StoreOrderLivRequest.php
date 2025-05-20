@@ -24,27 +24,24 @@ class StoreOrderLivRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id_User' => 'exists:users,id_User',
             'title' => 'required|string',
             'auteur' => 'required|string',
             'category' => 'required|string',
-            'quantite' => 'required|integer',
         ];
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     */
     public function messages(): array
     {
         return [
+            'id_user.required' => 'معرف المستخدم مطلوب',
+            'id_user.exists' => 'المستخدم المحدد غير موجود',
             'title.required' => 'عنوان الكتاب مطلوب',
             'title.string' => 'عنوان الكتاب يجب أن يكون نصاً',
             'auteur.required' => 'اسم المؤلف مطلوب',
             'auteur.string' => 'اسم المؤلف يجب أن يكون نصاً',
             'category.required' => 'التصنيف مطلوب',
             'category.string' => 'التصنيف يجب أن يكون نصاً',
-            'quantite.required' => 'الكمية مطلوبة',
-            'quantite.integer' => 'الكمية يجب أن تكون رقماً',
         ];
     }
 }

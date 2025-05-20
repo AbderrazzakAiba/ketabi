@@ -11,7 +11,6 @@ use App\Http\Requests\StoreOrderLivRequest; // Import the Store Form Request
 use App\Http\Requests\UpdateOrderLivRequest; // Import the Update Form Request
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Import the trait
 use App\Models\OrderLiv; // Import OrderLiv model
-use App\Models\Book; // Import Book model
 use App\Http\Requests\ApproveOrderLivRequest;
 
 class OrderLivController extends Controller
@@ -45,19 +44,16 @@ class OrderLivController extends Controller
         $validated = $request->validated();
 
         $orderData = [
-            'id_User' => auth()->guard('sanctum')->user()->id_User,
             'title' => $validated['title'],
             'auteur' => $validated['auteur'],
             'category' => $validated['category'],
-            'quantite' => $validated['quantite'],
             'order_date' => now(),
             'status' => OrderStatus::PENDING,
-
+            'id_User' => auth()->id(), // Add the authenticated user's ID
         ];
 
         $orderLiv = $this->orderLivRepo->create($orderData);
 
-        // استخدام Resource لتنسيق الاستجابة
         return new OrderLivResource($orderLiv);
     }
 
@@ -70,7 +66,7 @@ class OrderLivController extends Controller
 
         $validated = $request->validated();
 
-        $orderLiv = $this->orderLivRepo->update($orderLiv->id, $validated); // Use model ID for repository update
+        $orderLiv = $this->orderLivRepo->update($orderLiv->id_demande, $validated); // Use model ID for repository update
 
         // استخدام Resource لتنسيق الاستجابة
         return new OrderLivResource($orderLiv);
@@ -83,7 +79,7 @@ class OrderLivController extends Controller
 
         // Route Model Binding handles finding the orderLiv or returning 404 automatically
 
-        $success = $this->orderLivRepo->delete($orderLiv->id); // Use model ID for repository delete
+        $success = $this->orderLivRepo->delete($orderLiv->id_demande); // Use model ID for repository delete
 
         if (!$success) {
             // This case might not be reached if Route Model Binding finds the model,
@@ -96,11 +92,11 @@ class OrderLivController extends Controller
 
     public function approve(ApproveOrderLivRequest $request, OrderLiv $orderLiv)
     {
-        $this->authorize('update', $orderLiv); // Add authorization check
+        $this->authorize('update', $orderLiv);
 
         $validated = $request->validated();
 
-        $orderLiv = $this->orderLivRepo->update($orderLiv->id, $validated);
+        $orderLiv = $this->orderLivRepo->update($orderLiv->id_demande, $validated);
 
         return new OrderLivResource($orderLiv);
     }

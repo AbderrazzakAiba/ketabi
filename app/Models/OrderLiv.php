@@ -15,9 +15,12 @@ class OrderLiv extends Model
     protected $primaryKey = 'id_demande'; // Correct Primary Key
 
     protected $fillable = [
-        'id_User',      // Correct foreign key name
-        'order_date',   // Correct column name
-        'status',       // Correct column name
+        'id_User',
+        'title',
+        'auteur',
+        'category',
+        'order_date',
+        'status',
     ];
 
     protected $casts = [
@@ -27,6 +30,6 @@ class OrderLiv extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id_User', 'id_User'); // Correct keys
+        return $this->belongsTo(User::class, 'id_User');
     }
 }

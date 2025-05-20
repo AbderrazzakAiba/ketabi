@@ -15,11 +15,16 @@ class OrderLivResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'user' => $this->user, // Assuming 'user' relationship
-            'book' => $this->book, // Assuming 'book' relationship
-            'date_order' => $this->date_order,
-            'etat_order' => $this->etat_order,
+            'id' => $this->id_demande,
+            'user' => $this->user ? [
+                'id' => $this->user->id_User,
+                'name' => $this->user->name,
+            ] : null,
+            'title' => $this->title,
+            'auteur' => $this->auteur,
+            'category' => $this->category,
+            'order_date' => $this->order_date,
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

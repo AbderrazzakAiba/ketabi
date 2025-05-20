@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Borrow;
 use App\Notifications\BorrowDueSoonNotification;
 use App\Notifications\BorrowOverdueNotification;
+use App\Mail\NotificationCreated; // Import the Mailable class
 use Carbon\Carbon;
 
 class SendBorrowNotifications extends Command
@@ -47,6 +48,7 @@ class SendBorrowNotifications extends Command
             if ($borrow->user) {
                 $borrow->user->notify(new BorrowDueSoonNotification($borrow));
                 $this->info('Sent due soon notification for borrow ID: ' . $borrow->id_pret);
+                \Illuminate\Support\Facades\Mail::to($borrow->user->email)->send(new NotificationCreated(new \App\Models\Notification(['message' => 'Your borrow is due soon!', 'recipient_id' => $borrow->user->id_User])));
             }
         }
 
@@ -72,6 +74,7 @@ class SendBorrowNotifications extends Command
                 if ($borrow->user) {
                     $borrow->user->notify(new BorrowOverdueNotification($borrow));
                     $this->info('Sent overdue notification for borrow ID: ' . $borrow->id_pret);
+                    \Illuminate\Support\Facades\Mail::to($borrow->user->email)->send(new NotificationCreated(new \App\Models\Notification(['message' => 'Your borrow is overdue!', 'recipient_id' => $borrow->user->id_User])));
                 }
             }
         }
