@@ -3,45 +3,17 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
-class AuthController extends Controller
+class PageController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        //
-    }
-
-    public function showRegistrationForm(): View
-    {
-        return view('CreatACount');
-    }
-
-     public function showLoginForm(): View
-    {
-        return view('Login');
-    }
-
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('authToken')->plainTextToken;
-
-            return response()->json(['token' => $token], 200);
-        }
-
-        return response()->json(['message' => 'Invalid login credentials'], 401);
+        return view('about');
     }
 
     /**

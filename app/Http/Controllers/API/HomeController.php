@@ -3,45 +3,27 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Book;
+use Illuminate\Http\Request;
 
-class AuthController extends Controller
+class HomeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display the first page.
      */
-    public function index()
+    public function index(): View
     {
-        //
+        $books = Book::all();
+        return view('FirstReception', compact('books'));
     }
 
-    public function showRegistrationForm(): View
+    /**
+     * Display the user's home page.
+     */
+    public function dashboard(): View
     {
-        return view('CreatACount');
-    }
-
-     public function showLoginForm(): View
-    {
-        return view('Login');
-    }
-
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('authToken')->plainTextToken;
-
-            return response()->json(['token' => $token], 200);
-        }
-
-        return response()->json(['message' => 'Invalid login credentials'], 401);
+        return view('home');
     }
 
     /**

@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/status/{status}', [UserController::class, 'getUsersByStatus'])->name('byStatus');
         Route::get('/status/pending', [UserController::class, 'getPendingUsers'])->name('pending');
-        Route::get('/{user}', [UserController::class, 'show'])->name('show');
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show')->where('user', '[0-9]+');
         Route::post('/', [UserController::class, 'store'])->name('store');
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
@@ -78,4 +78,18 @@ Route::fallback(function () {
 // Test route
 Route::get('/test-route', function () {
     return response()->json(['message' => 'Test route works!']);
+});
+
+Route::post('/test-email', function (\Illuminate\Http\Request $request) {
+    $data = $request->validate([
+        'recipient_id' => 'required|exists:users,id_User',
+        'title' => 'required|string',
+        'body' => 'required|string',
+    ]);
+
+    $user = \App\Models\User::findOrFail($data['recipient_id']);
+
+    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TestMail($data['title'], $data['body']));
+
+    return response()->json(['message' => 'Test email sent!']);
 });
