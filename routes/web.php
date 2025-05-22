@@ -9,9 +9,9 @@ use App\Http\Controllers\API\BookController;
 use App\Http\Controllers\API\BorrowController;
 use App\Http\Controllers\API\AdminController;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\WebAuthController;
 
 use App\Http\Controllers\API\PageController as WebPageController;
-use App\Http\Controllers\API\AuthController as WebAuthController;
 
 
 

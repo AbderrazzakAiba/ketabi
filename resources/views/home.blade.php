@@ -332,7 +332,7 @@
   </div>
 
   <header>
-    <img src="image/pexels-olga-volkovitskaia-131638009-17406787.jpg" class="header-image" alt="خلفية المكتبة">
+    <img src="/image/pexels-olga-volkovitskaia-131638009-17406787.jpg" class="header-image" alt="خلفية المكتبة">
     <div class="header-content">
       <h1>منصة إدارة المكتبة</h1>
       <p>مرحباً بك في النظام الإلكتروني للمكتبة</p>
@@ -348,7 +348,7 @@
     <a href="{{ route('home') }}">الصفحة الرئيسية</a>
     <a href="{{ route('books.index') }}">قائمة الكتب</a>
     <a href="{{ route('about') }}">حول كتابي</a>
-    <a href="{{ route('borrowed.index') }}" class="active">كتبي المستعارة</a>
+    <a href="{{ route('mybooks.index') }}" class="active">كتبي المستعارة</a>
     <a href="manage-accounts.html">لوحة التحكم</a>
   </nav>
   <div class="logo-container">

@@ -121,10 +121,11 @@
 </head>
 <body>
 
+
 <div class="auth-container">
   <div class="header-text">
     <div class="logo-container">
-      <img src="../image/20250429_000806(2).png" alt="لوجو " style="width: 300px;height:auto;">
+      <img src="/image/20250429_000806(2).png" alt="لوجو " style="width: 300px;height:auto;">
     </div>
     <h3 style="color: black;">إضافة عملية استعارة جديدة</h3>
     <p style="color: black;">قم بتسجيل معلومات الاستعارة بدقة</p>
@@ -137,7 +138,7 @@
         <div>
           <label for="date_emprunt">تاريخ الاستعارة</label>
           <input type="date" id="date_emprunt" required>
-        </div> 
+        </div>
         <div>
           <label for="date_retour">تاريخ الإرجاع</label>
           <input type="date" id="date_retour" readonly required>
@@ -166,11 +167,11 @@
   // تهيئة التواريخ
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('date_emprunt').value = today;
-  
+
   // حساب تاريخ الإرجاع (3 أيام من تاريخ الاستعارة)
   const startInput = document.getElementById('date_emprunt');
   const endInput = document.getElementById('date_retour');
-  
+
   function calculateReturnDate() {
     const startDate = new Date(startInput.value);
     if (isNaN(startDate)) return;
@@ -179,7 +180,7 @@
     endDate.setDate(endDate.getDate() + 15);
     endInput.value = endDate.toISOString().split('T')[0];
   }
-  
+
   startInput.addEventListener('change', calculateReturnDate);
   calculateReturnDate(); // حساب التاريخ الأولي
 
@@ -187,24 +188,24 @@
   function populateAvailableBooks() {
     const bookSelect = document.getElementById('book_id');
     bookSelect.innerHTML = '<option value="">اختر كتاب</option>';
-    
+
     try {
       const books = JSON.parse(localStorage.getItem('books')) || [];
       const borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
-      
+
       // الحصول على عناوين الكتب المستعارة
       const borrowedBookIds = borrowedBooks.map(book => book.id);
-      
+
       // تصفية الكتب المتاحة فقط (غير مستعارة)
-      const availableBooks = books.filter(book => 
+      const availableBooks = books.filter(book =>
         !borrowedBookIds.includes(book.id) && book.status === 'متوفر'
       );
-      
+
       if (availableBooks.length === 0) {
         bookSelect.innerHTML = '<option value="">لا توجد كتب متاحة للاستعارة</option>';
         return;
       }
-      
+
       availableBooks.forEach(book => {
         const option = document.createElement('option');
         option.value = book.id;
@@ -219,28 +220,28 @@
   // معالجة إرسال النموذج
   document.getElementById('borrowForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     const bookId = document.getElementById('book_id').value;
     const studentId = document.getElementById('student_id').value;
     const borrowDate = document.getElementById('date_emprunt').value;
     const returnDate = document.getElementById('date_retour').value;
     const borrowType = document.getElementById('type_empr').value;
-    
+
     if (!bookId || !studentId || !borrowDate || !returnDate || !borrowType) {
       showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
       return;
     }
-    
+
     try {
       // الحصول على معلومات الكتاب
       const books = JSON.parse(localStorage.getItem('books')) || [];
       const book = books.find(b => b.id === bookId);
-      
+
       if (!book) {
         showAlert('الكتاب المحدد غير موجود', 'error');
         return;
       }
-      
+
       // إنشاء سجل الاستعارة
       const newBorrow = {
         id: Date.now().toString(),
@@ -255,25 +256,25 @@
         status: 'مستعارة',
         canExtend: true
       };
-      
+
       // حفظ الاستعارة
       const borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
       borrowedBooks.push(newBorrow);
       localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-      
+
       // تحديث حالة الكتاب إلى "مستعارة"
       updateBookStatus(bookId, 'مستعارة');
-      
+
       // عرض رسالة النجاح
       showAlert('تمت عملية الاستعارة بنجاح', 'success');
-      
+
       // إعادة تعبئة قائمة الكتب المتاحة
       populateAvailableBooks();
-      
+
       // إعادة تعيين النموذج
       document.getElementById('student_id').value = '';
       document.getElementById('type_empr').value = '';
-      
+
     } catch (error) {
       console.error('حدث خطأ أثناء حفظ الاستعارة:', error);
       showAlert('حدث خطأ أثناء حفظ الاستعارة', 'error');
@@ -303,14 +304,14 @@
     alertDiv.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
     alertDiv.style.color = type === 'success' ? '#155724' : '#721c24';
     alertDiv.style.borderColor = type === 'success' ? '#c3e6cb' : '#f5c6cb';
-    
+
     alertDiv.innerHTML = `
       <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
       ${message}
     `;
-    
+
     document.body.appendChild(alertDiv);
-    
+
     setTimeout(() => {
       alertDiv.style.animation = 'fadeOut 0.3s';
       setTimeout(() => alertDiv.remove(), 300);

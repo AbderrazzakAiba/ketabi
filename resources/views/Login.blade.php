@@ -1,3 +1,4 @@
+<!-- filepath: d:\ketabi\resources\views\Login.blade.php -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -100,6 +101,11 @@
 
     }
 
+    .login-message {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 16px;
+    }
   </style>
 
 </head>
@@ -129,6 +135,8 @@
         <label for="password">كلمة المرور</label>
         <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
 
+        <div id="loginMessage" class="login-message"></div>
+
         <button type="submit" style="background-color: #4F46E5;">تسجيل الدخول</button>
 
         <div class="note" style="margin-top: 30px; text-align: center;">
@@ -144,6 +152,9 @@
 
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      const messageDiv = document.getElementById('loginMessage');
+      messageDiv.textContent = '';
+      messageDiv.style.color = '';
 
       fetch('/api/login', {
         method: 'POST',
@@ -152,23 +163,34 @@
         },
         body: JSON.stringify({ email: email, password: password })
       })
-      .then(response =\> response.json())
-      .then(data =\> {
+      .then(async response => {
+        let data;
+        try {
+          data = await response.json();
+        } catch {
+          data = {};
+        }
         if (data.token) {
-          // Store the token (e.g., in localStorage)
+          messageDiv.textContent = "تم تسجيل الدخول بنجاح!";
+          messageDiv.style.color = "green";
           localStorage.setItem('authToken', data.token);
-
-          // Redirect to the home page
-          window.location.href = '{{ route('home') }}';
+          setTimeout(() => {
+            window.location.href = '{{ route('home') }}';
+          }, 1200);
+        } else if (response.status === 403) {
+          messageDiv.textContent = data.message || "حسابك غير مفعل أو قيد المراجعة.";
+          messageDiv.style.color = "red";
+        } else if (response.status === 401) {
+          messageDiv.textContent = data.message || "بيانات الدخول غير صحيحة.";
+          messageDiv.style.color = "red";
         } else {
-          // Display an error message
-          console.log('Login failed data:', data);
-          alert('Invalid login credentials');
+          messageDiv.textContent = "حدث خطأ أثناء تسجيل الدخول.";
+          messageDiv.style.color = "red";
         }
       })
-      .catch(error =\> {
-        console.error('Error:', error);
-        alert('An error occurred during login');
+      .catch(error => {
+        messageDiv.textContent = "حدث خطأ أثناء تسجيل الدخول.";
+        messageDiv.style.color = "red";
       });
     });
   </script>

@@ -13,7 +13,7 @@
       --text-color: #30382F;
       --light-bg: #f5f7fa;
     }
-    
+
     body {
       font-family: 'Tajawal', sans-serif;
       margin: 0;
@@ -23,7 +23,7 @@
       line-height: 1.6;
       scroll-behavior: smooth;
     }
-    
+
     header {
       color: white;
       text-align: center;
@@ -55,13 +55,13 @@
       font-size: 45px;
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
-    
+
     header p {
       margin: 15px 0;
       font-size: 20px;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
-    
+
     /* شريط التنقل المعدل */
     nav {
       background-color: white;
@@ -74,7 +74,7 @@
       top: 0;
       z-index: 100;
     }
-    
+
     nav a {
       color: var(--text-color);
       text-decoration: none;
@@ -83,19 +83,19 @@
       border-radius: 25px;
       transition: all 0.3s;
     }
-    
+
     nav a:hover, nav a.active {
       background-color: var(--secondary-color);
       color: white;
       transform: translateY(-2px);
     }
-    
-    
+
+
     .books-section {
       padding: 20px;
       background-color: #f8f9fa;
     }
-    
+
     .section-title {
       text-align: center;
       font-size: 28px;
@@ -105,13 +105,13 @@
       top: -150px;
       color: #5831d5;
     }
-    
+
     .books-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 25px;
     }
-    
+
     .book-card {
       background-color: white;
       border-radius: 10px;
@@ -120,38 +120,38 @@
       transition: all 0.3s ease;
       height: 420px; /* زيادة الارتفاع لاستيعاب الأزرار الجديدة */
     }
-    
+
     .book-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
-    
+
     .book-cover {
       width: 100%;
       height: 200px;
       object-fit: cover;
       transition: transform 0.3s;
     }
-    
+
     .book-card:hover .book-cover {
       transform: scale(1.03);
     }
-    
+
     .book-details {
       padding: 15px;
     }
-    
+
     .book-title {
       font-weight: bold;
       font-size: 18px;
       margin-bottom: 5px;
     }
-    
+
     .book-author {
       color: #666;
       margin-bottom: 10px;
     }
-    
+
     .borrow-info {
       margin-top: 15px;
       padding: 10px;
@@ -159,20 +159,20 @@
       border-radius: 5px;
       font-size: 14px;
     }
-    
+
     .borrow-date, .return-date {
       display: flex;
       justify-content: space-between;
       margin-bottom: 5px;
     }
-    
+
     .book-actions {
       display: flex;
       gap: 10px;
       margin-top: 15px;
       flex-wrap: wrap;
     }
-    
+
     .book-btn {
       flex: 1;
       min-width: 80px;
@@ -186,37 +186,37 @@
       border: none;
       font-family: 'Tajawal', sans-serif;
     }
-    
+
     .details-btn {
       background-color: #f0f0f0;
       color: #333;
     }
-    
+
     .details-btn:hover {
       background-color: #ddd;
       transform: translateY(-2px);
     }
-    
+
     .return-btn {
       background-color: #dc3545;
       color: white;
     }
-    
+
     .return-btn:hover {
       background-color: #c82333;
       transform: translateY(-2px);
     }
-    
+
     .extend-btn {
       background-color: #28a745;
       color: white;
     }
-    
+
     .extend-btn:hover {
       background-color: #218838;
       transform: translateY(-2px);
     }
-    
+
     footer {
       text-align: center;
       padding: 30px;
@@ -224,7 +224,7 @@
       color: white;
       margin-top: 50px;
     }
-    
+
     .no-books {
       grid-column: 1 / -1;
       text-align: center;
@@ -232,7 +232,7 @@
       font-size: 18px;
       color: #666;
     }
-    
+
     .logo-container {
       display: flex;
       justify-content: center;
@@ -240,35 +240,35 @@
       flex-direction: column;
       margin: -50px auto 30px auto;
     }
-    
+
     /* تحسينات للهواتف */
     @media (max-width: 768px) {
       header {
         height: 350px;
       }
-      
+
       header h1 {
         font-size: 32px;
       }
-      
+
       nav {
         flex-wrap: wrap;
         gap: 10px;
       }
-      
+
       nav a {
         padding: 8px 15px;
         font-size: 14px;
       }
-      
+
       .books-container {
         grid-template-columns: 1fr;
       }
-      
+
       .book-actions {
         flex-direction: column;
       }
-      
+
       .book-btn {
         width: 100%;
       }
@@ -287,11 +287,11 @@
 
   <!-- شريط التنقل المعدل -->
   <nav>
-    <a href="home.html">الصفحة الرئيسية</a>
-    <a href="books.html">قائمة الكتب</a>
-    <a href="about.html">حول كتابي</a>
-    <a href="kotbi.html" class="active">كتبي المستعارة</a>
-    <a href="manage-accounts.html">لوحة التحكم</a>
+    <a href="{{ route('home') }}">الصفحة الرئيسية</a>
+    <a href="{{ route('books.index') }}">قائمة الكتب</a>
+    <a href="{{ route('about') }}">حول كتابي</a>
+    <a href="{{ route('mybooks.index') }}" class="active">كتبي المستعارة</a>
+    <a href="dashboard.html">لوحة التحكم</a>
   </nav>
 
   <div class="logo-container">
@@ -350,7 +350,7 @@
     function displayBorrowedBooks() {
       const container = document.getElementById('borrowedBooksContainer');
       const borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
-      
+
       if (borrowedBooks.length === 0) {
         container.innerHTML = `
           <div class="no-books">
@@ -363,13 +363,13 @@
 
       container.innerHTML = borrowedBooks.map(book => `
         <div class="book-card" data-id="${book.id}">
-          <img src="${book.image || 'https://via.placeholder.com/300x250?text=لا+يوجد+غلاف'}" 
-               alt="${book.title}" 
+          <img src="${book.image || 'https://via.placeholder.com/300x250?text=لا+يوجد+غلاف'}"
+               alt="${book.title}"
                class="book-cover">
           <div class="book-details">
             <div class="book-title">${book.title}</div>
             <div class="book-author">${book.author}</div>
-            
+
             <div class="borrow-info">
               <div class="borrow-date">
                 <span>تاريخ الاستعارة:</span>
@@ -384,7 +384,7 @@
                 <span>${book.status}</span>
               </div>
             </div>
-            
+
             <div class="book-actions">
               <a href="book_detail.html?id=${book.id}" class="book-btn details-btn">
                 <i class="fas fa-info-circle"></i> التفاصيل
@@ -405,10 +405,10 @@
           let borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
           borrowedBooks = borrowedBooks.filter(book => book.id !== bookId);
           localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-          
+
           updateMainBookStatus(bookId, 'متوفر');
           displayBorrowedBooks();
-          
+
           showAlert('تم إرجاع الكتاب بنجاح', 'success');
         } catch (error) {
           console.error('حدث خطأ أثناء إرجاع الكتاب:', error);
@@ -421,32 +421,32 @@
     function extendBorrowPeriod(bookId) {
       const borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
       const bookIndex = borrowedBooks.findIndex(book => book.id === bookId);
-      
+
       if (bookIndex === -1) {
         showAlert('لم يتم العثور على الكتاب', 'error');
         return;
       }
-      
+
       const book = borrowedBooks[bookIndex];
-      
+
       if (!book.canExtend) {
         showAlert('لا يمكن تمديد مدة استعارة هذا الكتاب', 'error');
         return;
       }
-      
+
       // حساب التاريخ الجديد (إضافة 14 يومًا)
       const currentReturnDate = new Date(book.returnDate);
       currentReturnDate.setDate(currentReturnDate.getDate() + 14);
-      
+
       const newReturnDate = currentReturnDate.toISOString().split('T')[0];
-      
+
       // تحديث بيانات الكتاب
       borrowedBooks[bookIndex] = {
         ...book,
         returnDate: newReturnDate,
         canExtend: false // منع التمديد مرة أخرى
       };
-      
+
       localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
       displayBorrowedBooks();
       showAlert('تم تمديد مدة الاستعارة بنجاح حتى ' + newReturnDate, 'success');
@@ -488,9 +488,9 @@
         <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
         ${message}
       `;
-      
+
       document.body.appendChild(alertDiv);
-      
+
       setTimeout(() => {
         alertDiv.style.animation = 'fadeOut 0.3s';
         setTimeout(() => alertDiv.remove(), 300);

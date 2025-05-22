@@ -13,7 +13,7 @@
       --text-color: #30382F;
       --light-bg: #f5f7fa;
     }
-    
+
     body {
       font-family: 'Tajawal', sans-serif;
       margin: 0;
@@ -22,7 +22,7 @@
       color: var(--text-color);
       line-height: 1.6;
     }
-    
+
     header {
       color: white;
       text-align: center;
@@ -49,7 +49,7 @@
       font-size: 45px;
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
-    
+
     nav {
       background-color: #f8f9fa;
       display: flex;
@@ -88,32 +88,32 @@
       border: none; /* إزالة الحدود */
     }
 
-    
+
     /* محتوى الصفحة */
     .container {
       max-width: 1000px;
       margin: 40px auto;
       padding: 0 20px;
     }
-    
+
     .page-header {
       text-align: center;
       margin-bottom: 40px;
     }
-    
+
     .page-title {
       color: var(--primary-color);
       font-size: 32px;
       margin-bottom: 15px;
     }
-    
+
     .page-subtitle {
       color: #666;
       font-size: 18px;
       max-width: 700px;
       margin: 0 auto;
     }
-    
+
     /* أقسام حول الموقع */
     .about-section {
       background-color: white;
@@ -122,7 +122,7 @@
       margin-bottom: 30px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    
+
     .section-title {
       color: var(--primary-color);
       font-size: 24px;
@@ -131,11 +131,11 @@
       display: flex;
       align-items: center;
     }
-    
+
     .section-title i {
       margin-left: 10px;
     }
-    
+
     /* فريق العمل */
     .team-grid {
       display: grid;
@@ -143,7 +143,7 @@
       gap: 25px;
       margin-top: 30px;
     }
-    
+
     .team-member {
       background-color: white;
       border-radius: 8px;
@@ -152,32 +152,32 @@
       text-align: center;
       transition: transform 0.3s;
     }
-    
+
     .team-member:hover {
       transform: translateY(-5px);
     }
-    
+
     .member-image {
       width: 100%;
       height: 200px;
       object-fit: cover;
     }
-    
+
     .member-info {
       padding: 20px;
     }
-    
+
     .member-name {
       font-weight: bold;
       font-size: 18px;
       margin: 10px 0 5px;
     }
-    
+
     .member-position {
       color: var(--primary-color);
       font-size: 14px;
     }
-    
+
     /* ميزات الموقع */
     .features {
       display: grid;
@@ -185,7 +185,7 @@
       gap: 20px;
       margin-top: 30px;
     }
-    
+
     .feature-card {
       background-color: white;
       border-radius: 8px;
@@ -193,19 +193,19 @@
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       border-top: 4px solid var(--primary-color);
     }
-    
+
     .feature-icon {
       font-size: 40px;
       color: var(--primary-color);
       margin-bottom: 15px;
     }
-    
+
     .feature-title {
       font-weight: bold;
       font-size: 18px;
       margin: 10px 0;
     }
-    
+
     /* الفوتر */
     footer {
       text-align: center;
@@ -214,39 +214,39 @@
       color: white;
       margin-top: 50px;
     }
-    
+
     .social-links {
       margin: 20px 0;
     }
-    
+
     .social-links a {
       color: white;
       font-size: 20px;
       margin: 0 10px;
       transition: all 0.3s;
     }
-    
+
     .social-links a:hover {
       color: #ddd;
       transform: translateY(-3px);
     }
-    
+
     /* تأثيرات للقوائم */
     .info-list {
       list-style-type: none;
       padding: 0;
     }
-    
+
     .info-list li {
       padding: 10px 0;
       border-bottom: 1px dashed #eee;
       display: flex;
     }
-    
+
     .info-list li:last-child {
       border-bottom: none;
     }
-    
+
     .info-list i {
       color: var(--primary-color);
       margin-left: 10px;
@@ -368,10 +368,10 @@
   </header>
 
   <nav>
-    <a href="home.html">الصفحة الرئيسية</a>
-    <a href="books.html">قائمة الكتب</a>
-    <a href="about.html">حول كتابي</a>
-    <a href="kotbi.html" >كتبي المستعارة</a>
+    <a href="{{ route('home') }}">الصفحة الرئيسية</a>
+    <a href="{{ route('books.index') }}">قائمة الكتب</a>
+    <a href="{{ route('about') }}">حول كتابي</a>
+    <a href="{{ route('mybooks.index') }}" >كتبي المستعارة</a>
     <a href="manage-accounts.html">لوحة التحكم</a>
   </nav>
 
@@ -380,13 +380,13 @@
       <h2 class="page-title">منصة كتابي لإدارة المكتبات</h2>
       <p class="page-subtitle">نقدم حلولاً متكاملة لإدارة المحتوى الثقافي وتسهيل عملية استعارة الكتب إلكترونياً</p>
     </div>
-    
+
     <div class="about-section">
       <h3 class="section-title"><i class="fas fa-info-circle"></i>عن المنصة</h3>
       <p>منصة "كتابي" هي نظام متكامل لإدارة المكتبات الرقمية، تم تطويرها لتلبية احتياجات القراء والباحثين في العالم العربي. تأسست المنصة عام 2023 بهدف تسهيل الوصول إلى المحتوى الثقافي والمعرفي.</p>
       <p>نحن نؤمن بأن المعرفة يجب أن تكون في متناول الجميع، لذلك صممنا واجهة بسيطة وسهلة الاستخدام تمكنك من تصفح آلاف الكتب والمصادر بكل سهولة.</p>
     </div>
-    
+
     <div class="about-section">
       <h3 class="section-title"><i class="fas fa-star"></i>رؤيتنا ورسالتنا</h3>
       <div class="features">
@@ -407,7 +407,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="about-section">
       <h3 class="section-title"><i class="fas fa-cogs"></i>مميزات المنصة</h3>
       <ul class="info-list">
@@ -419,7 +419,7 @@
         <li><i class="fas fa-check"></i> تطبيقات متوافقة مع جميع الأجهزة</li>
       </ul>
     </div>
-    
+
     <div class="about-section">
       <h3 class="section-title"><i class="fas fa-users"></i>فريق العمل</h3>
       <div class="team-grid">
@@ -446,7 +446,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="about-section">
       <h3 class="section-title"><i class="fas fa-chart-pie"></i>إحصائيات</h3>
       <div class="features">

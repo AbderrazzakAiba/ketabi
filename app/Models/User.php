@@ -6,12 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 // Removed duplicate HasFactory import, it's already included in the 'use' statement below
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Enums\UserRole;   // Import Enums
 use App\Enums\UserStatus;
-use Laravel\Sanctum\HasApiTokens;
 
 
 class User extends Authenticatable
@@ -147,14 +147,12 @@ class User extends Authenticatable
         return $this->role === UserRole::STUDENT;
     }
 
-/*************  ✨ Windsurf Command ⭐  *************/
     /**
      * Determine if the user holds the role of a professor.
      *
      * @return bool True if the user is a professor, false otherwise.
      */
 
-/*******  0c456377-08c9-4a3c-a2cf-99b6fa637f4c  *******/
     public function isProfessor(): bool
     {
         return $this->role === UserRole::PROFESSOR;

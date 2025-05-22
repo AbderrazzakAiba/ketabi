@@ -137,14 +137,14 @@
 </head>
 <body>
     <div class="logo-container">
-        <img src="../image/20250429_000806(2).png" alt="لوجو " style="width: 300px;height:auto;">
+        <img src="/image/20250429_000806(2).png" alt="لوجو " style="width: 300px;height:auto;">
     </div>
     <h1>مرحبًا بك في كتابي </h1>
     <p>اكتشف عالماً من المعرفة بين يديك</p>
 
     <div class="container">
         <h1 style="color: black; font-family:'Tajawal', sans-serif ; text-align: center;">انشاء حساب جديد</h1>
-        <form id="registerForm">
+        <form id="registerForm" onSubmit="return checkPasswords()">
             <!-- الصف الأول -->
             <div class="form-row">
                 <div class="form-group">
@@ -230,24 +230,35 @@
 
             <!-- قسم العامل -->
             <div class="form-row user-type-section" id="employerSection">
-                <div class="form-group">
-                    <label for="employerId">معرّف العامل</label>
-                    <input type="text" id="employerId" name="employerId" placeholder="ادخل معرف الخاص بك">
-                </div>
+
                 <div class="form-group"></div> <!-- خانة فارغة للمحافظة على التنسيق -->
             </div>
-
-            <!-- الصف الخامس -->
+             <!-- الصف الخامس - تاريخ ومكان الميلاد -->
             <div class="form-row">
                 <div class="form-group">
-                    <label for="password">كلمة المرور</label>
-                    <input type="password" id="password" name="password" placeholder="ادخل كلمة المرور" required>
+                    <label for="dateOfBirth">تاريخ الميلاد</label>
+                    <input type="date" id="dateOfBirth" name="date_of_birth" required>
                 </div>
                 <div class="form-group">
-                    <label for="confirmPassword">تأكيد كلمة المرور</label>
-                    <input type="password" id="confirmPassword" name="confirm_password" placeholder=" تاكيد كلمة المرور" required>
+                    <label for="placeOfBirth">مكان الميلاد</label>
+                    <input type="text" id="placeOfBirth" name="place_of_birth" placeholder="ادخل مكان الميلاد" required>
                 </div>
             </div>
+            <!-- الصف السادس -->
+            <div class="form-row">
+    <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" name="password" placeholder="ادخل كلمة المرور" required>
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">تأكيد كلمة المرور</label>
+        <input type="password" id="confirmPassword" name="confirm_password" placeholder="تاكيد كلمة المرور" required>
+    </div>
+</div>
+
+<div id="errorMessage" style="color: red; margin-top: 5px;"></div>
+
+
 
             <!-- شروط الاستخدام -->
             <div class="full-width">
@@ -260,7 +271,7 @@
             </div>
 
             <!-- زر الإرسال -->
-            <button type="submit" class="submit-btn" onclick="window.location.href='{{route('home')}}'">إنشاء حساب</button>
+            <button type="submit" class="submit-btn">إنشاء حساب</button>
         </form>
     </div>
     <script>
@@ -280,30 +291,48 @@
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // جمع البيانات
-            const userType = document.getElementById('userType').value;
-            const account = {
-                userType: userType,
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
-                affiliation: userType === 'professor' ? document.getElementById('affiliation').value : '',
-                registrationNumber: userType === 'student' ? document.getElementById('registrationNumber').value : '',
-                level: userType === 'student' ? document.getElementById('level').value : '',
-                academicYear: userType === 'student' ? document.getElementById('academicYear').value : '',
-                specialty: userType === 'student' ? document.getElementById('specialty').value : '',
-                employerId: userType === 'employer' ? document.getElementById('employerId').value : ''
-            };
+            const formData = new FormData(this);
 
-            // جلب الحسابات القديمة أو مصفوفة فارغة
-            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-            accounts.push(account);
-            localStorage.setItem('accounts', JSON.stringify(accounts));
+            fetch('/api/register', {
+    method: 'POST',
+    body: formData
+})
+.then(async response => {
+    if (!response.ok) {
+        const text = await response.text();
+        console.error("استجابة غير ناجحة:", text);
+        throw new Error("فشل في تسجيل المستخدم");
+    }
+    return response.json();
+})
+.then(data => {
+    if (data.success) {
+        alert('تم إنشاء الحساب بنجاح!');
+        window.location.href = "{{ route('login.form') }}";
+    } else {
+        alert('فشل إنشاء الحساب: ' + data.message);
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+    alert('حدث خطأ أثناء إنشاء الحساب');
+});
         });
+        function checkPasswords() {
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const errorDiv = document.getElementById("errorMessage");
+
+    if (password !== confirmPassword) {
+      errorDiv.textContent = "كلمتا المرور غير متطابقتين!";
+      return false; // يمنع الإرسال
+    }
+
+    errorDiv.textContent = "";
+    // يمكنك هنا إرسال النموذج أو القيام بأي إجراء آخر
+    alert("تم التسجيل بنجاح!");
+    return true;
+  }
     </script>
 </body>
 </html>

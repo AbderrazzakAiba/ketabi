@@ -98,7 +98,7 @@
       color: white;
       transform: translateY(-2px);
     }
-     
+
     .books-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -288,10 +288,10 @@
   </header>
 
   <nav>
-    <a href="home.html">الصفحة الرئيسية</a>
-    <a href="books.html">قائمة الكتب</a>
-    <a href="about.html">حول كتابي</a>
-    <a href="kotbi.html" class="active">كتبي المستعارة</a>
+    <a href="{{ route('home') }}">الصفحة الرئيسية</a>
+    <a href="{{ route('books.index') }}">قائمة الكتب</a>
+    <a href="{{ route('about') }}">حول كتابي</a>
+    <a href="{{ route('mybooks.index') }}" >كتبي المستعارة</a>
     <a href="manage-accounts.html">لوحة التحكم</a>
   </nav>
 
@@ -318,7 +318,7 @@
     function displayBooks(booksToShow = null) {
       const booksContainer = document.getElementById('booksContainer');
       const books = booksToShow || JSON.parse(localStorage.getItem('books')) || [];
-      
+
       if (books.length === 0) {
         booksContainer.innerHTML = `
           <div class="no-books">
@@ -331,8 +331,8 @@
 
       booksContainer.innerHTML = books.map((book, index) => `
         <div class="book-card">
-          <img src="${book.image || 'https://via.placeholder.com/300x250?text=لا+يوجد+غلاف'}" 
-               alt="${book.title}" 
+          <img src="${book.image || 'https://via.placeholder.com/300x250?text=لا+يوجد+غلاف'}"
+               alt="${book.title}"
                class="book-cover">
           <div class="book-details">
             <div class="book-title">${book.title}</div>
@@ -353,7 +353,7 @@
     function searchBooks() {
       const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
       const allBooks = JSON.parse(localStorage.getItem('books')) || [];
-      
+
       if (!searchTerm) {
         displayBooks();
         return;
@@ -377,7 +377,7 @@
     // تحميل الكتب عند فتح الصفحة
     window.addEventListener('DOMContentLoaded', () => {
       displayBooks();
-      
+
       // تحديث تلقائي عند تغيير localStorage
       window.addEventListener('storage', () => {
         displayBooks();

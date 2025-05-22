@@ -11,6 +11,9 @@ use App\Http\Resources\BookResource; // Import BookResource
 use App\Http\Requests\StoreBookRequest; // Import the Store Form Request
 use App\Http\Requests\UpdateBookRequest; // Import the Update Form Request
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Borrow;
 
 class BookController extends Controller
 {
@@ -21,8 +24,6 @@ class BookController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Book::class);
-
         $books = Book::all();
         return BookResource::collection($books);
     }
@@ -138,5 +139,21 @@ class BookController extends Controller
         $book->delete();
 
         return response()->json(['message' => 'Book deleted successfully.']);
+    }
+
+    public function myBooks(): View
+    {
+        if (Auth::check()) {
+            $user = auth()->user();
+            $borrowedBooks = Borrow::where('id_etudiant', $user->id)->get();
+            return view('my-Book', compact('borrowedBooks'));
+        } else {
+            return view('my-Book', ['borrowedBooks' => []]);
+        }
+    }
+
+    public function showBooks(): View
+    {
+        return view('book-list');
     }
 }
