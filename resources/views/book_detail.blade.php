@@ -1,9 +1,10 @@
+<!-- filepath: d:\ketabi\resources\views\my-Book.blade.php -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تفاصيل الكتاب | منصة كتابي</title>
+  <title>كتبي المستعارة | منصة إدارة المكتبة</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -13,7 +14,6 @@
       --text-color: #30382F;
       --light-bg: #f5f7fa;
     }
-
     body {
       font-family: 'Tajawal', sans-serif;
       margin: 0;
@@ -21,18 +21,50 @@
       background-color: var(--light-bg);
       color: var(--text-color);
       line-height: 1.6;
+      scroll-behavior: smooth;
     }
-
-    /* شريط التنقل */
+    header {
+      color: white;
+      text-align: center;
+      position: relative;
+      height: 350px;
+      overflow: hidden;
+    }
+    .header-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    .header-content {
+      position: relative;
+      z-index: 2;
+      padding-top: 80px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 45px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    header p {
+      margin: 15px 0;
+      font-size: 20px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
     nav {
       background-color: white;
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 10px;
       padding: 15px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-
     nav a {
       color: var(--text-color);
       text-decoration: none;
@@ -41,322 +73,372 @@
       border-radius: 25px;
       transition: all 0.3s;
     }
-
-    nav a:hover {
+    nav a:hover, nav a.active {
       background-color: var(--secondary-color);
       color: white;
-    }
-
-    /* محتوى الصفحة */
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-
-    .book-detail-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      background-color: white;
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-    }
-
-    .book-cover-container {
-      flex: 1;
-      min-width: 300px;
-      text-align: center;
-    }
-
-    .book-cover {
-      max-width: 100%;
-      height: 400px;
-      object-fit: contain;
-      border-radius: 5px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-    }
-
-    .book-info {
-      flex: 2;
-      min-width: 300px;
-    }
-
-    .book-title {
-      color: var(--primary-color);
-      font-size: 28px;
-      margin-top: 0;
-      margin-bottom: 10px;
-    }
-
-    .book-author {
-      font-size: 20px;
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .book-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .meta-icon {
-      color: var(--primary-color);
-    }
-
-    .book-status {
-      display: inline-block;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-weight: bold;
-    }
-
-    .available {
-      background-color: #e6f7ee;
-      color: #28a745;
-    }
-
-    .unavailable {
-      background-color: #f8d7da;
-      color: #dc3545;
-    }
-
-    .book-description {
-      margin-bottom: 30px;
-      line-height: 1.8;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .action-btn {
-      padding: 12px 25px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .borrow-btn {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-    }
-
-    .back-btn {
-      background-color: white;
-      color: var(--primary-color);
-      border: 2px solid var(--primary-color);
-    }
-
-    .action-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     }
-
-    /* قسم التفاصيل الإضافية */
-    .details-section {
-      margin-top: 40px;
-      background-color: white;
-      border-radius: 8px;
-      padding: 25px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    .books-section {
+      padding: 20px;
+      background-color: #f8f9fa;
     }
-
     .section-title {
+      text-align: center;
+      font-size: 28px;
       color: var(--primary-color);
-      font-size: 22px;
-      margin-top: 0;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
+      margin-bottom: 30px;
+      position: relative;
+      top: -150px;
+      color: #5831d5;
     }
-
-    .details-grid {
+    .books-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
     }
-
-    .detail-item {
-      margin-bottom: 15px;
+    .book-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      height: 590px; /* تم زيادة الارتفاع */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-
-    .detail-label {
+    .book-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    .book-cover {
+      width: 100%;
+      height: 290px; /* تم زيادة الارتفاع */
+      object-fit: cover;
+      transition: transform 0.3s;
+      display: block;
+    }
+    .book-card:hover .book-cover {
+      transform: scale(1.03);
+    }
+    .book-details {
+      padding: 15px;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .book-title {
       font-weight: bold;
-      color: #666;
+      font-size: 18px;
       margin-bottom: 5px;
     }
-
-    /* الفوتر */
+    .book-author {
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .borrow-info {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f0f7ff;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .borrow-date, .return-date {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .status {
+      margin-top: 8px;
+      margin-bottom: 0;
+    }
+    .status-row {
+      margin-bottom: 3px;
+    }
+    .book-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    .book-btn {
+      flex: 1;
+      min-width: 80px;
+      padding: 8px;
+      border-radius: 5px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+      font-family: 'Tajawal', sans-serif;
+    }
+    .details-btn {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    .details-btn:hover {
+      background-color: #ddd;
+      transform: translateY(-2px);
+    }
+    .return-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+    .return-btn:hover {
+      background-color: #c82333;
+      transform: translateY(-2px);
+    }
+    .extend-btn {
+      background-color: #28a745;
+      color: white;
+    }
+    .extend-btn:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+    }
     footer {
       text-align: center;
-      padding: 20px;
+      padding: 30px;
       background-color: var(--primary-color);
       color: white;
       margin-top: 50px;
     }
+    .no-books {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 30px;
+      font-size: 18px;
+      color: #666;
+    }
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: -50px auto 30px auto;
+    }
+    @media (max-width: 768px) {
+      header {
+        height: 350px;
+      }
+      header h1 {
+        font-size: 32px;
+      }
+      nav {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      nav a {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+      .books-container {
+        grid-template-columns: 1fr;
+      }
+      .book-actions {
+        flex-direction: column;
+      }
+      .book-btn {
+        width: 100%;
+      }
+      .book-card {
+        height: 650px; /* زيادة الارتفاع للجوال */
+      }
+      .book-cover {
+        height: 220px;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <header>
+    <img src="image/pexels-olga-volkovitskaia-131638009-17406787.jpg" class="header-image" alt="خلفية المكتبة">
+    <div class="header-content">
+      <h1>كتبي المستعارة</h1>
+      <p>عرض جميع الكتب التي قمت باستعارتها</p>
+    </div>
+  </header>
+
   <nav>
-    <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
-    <a href="books.html"><i class="fas fa-book"></i> قائمة الكتب</a>
-    <a href="dashboard.html"><i class="fas fa-cog"></i> لوحة التحكم</a>
+    <a href="{{ route('home') }}">الصفحة الرئيسية</a>
+    <a href="{{ route('books.index') }}">قائمة الكتب</a>
+    <a href="{{ route('about') }}">حول كتابي</a>
+    <a href="{{ route('mybooks.index') }}" class="active">كتبي المستعارة</a>
+    <a href="dashboard.html">لوحة التحكم</a>
   </nav>
 
-  <div class="container">
-    <div class="book-detail-container">
-      <div class="book-cover-container">
-        <img id="bookCover" src="https://via.placeholder.com/300x400?text=صورة+الغلاف" alt="غلاف الكتاب" class="book-cover">
-      </div>
-
-      <div class="book-info">
-        <h1 id="bookTitle" class="book-title">عنوان الكتاب</h1>
-        <p id="bookAuthor" class="book-author">اسم المؤلف</p>
-
-        <div class="book-meta">
-          <div class="meta-item">
-            <i class="fas fa-tag meta-icon"></i>
-            <span id="bookCategory">التصنيف</span>
-          </div>
-          <div class="meta-item">
-            <i class="fas fa-calendar-alt meta-icon"></i>
-            <span id="bookYear">سنة النشر</span>
-          </div>
-          <div class="meta-item">
-            <i class="fas fa-file-alt meta-icon"></i>
-            <span id="bookPages">عدد الصفحات</span>
-          </div>
-          <div class="meta-item">
-            <span id="bookStatus" class="book-status available">متوفر</span>
-          </div>
-        </div>
-
-        <div class="book-description">
-          <h3>نبذة عن الكتاب</h3>
-          <p id="bookDescription">وصف الكتاب سيظهر هنا. هذا النص هو مثال يمكن استبداله بنص حقيقي يحتوي على وصف مفصل للكتاب ومحتواه.</p>
-        </div>
-
-        <div class="action-buttons">
-          <a href="#" class="action-btn borrow-btn" id="borrowBtn" onclick="window.location.href='Etudiants/borrows.html'">
-            <i class="fas fa-bookmark"></i> استعارة الكتاب
-          </a>
-          <a href="books.html" class="action-btn back-btn" onclick="window.history.back()">
-            <i class="fas fa-arrow-right"></i> العودة للقائمة
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="details-section">
-      <h3 class="section-title">تفاصيل إضافية</h3>
-      <div class="details-grid">
-        <div class="detail-item">
-          <div class="detail-label">اللغة</div>
-          <div id="bookLanguage">العربية</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-label">الناشر</div>
-          <div id="bookPublisher">دار النشر</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-label">الرقم الدولي</div>
-          <div id="bookISBN">978-3-16-148410-0</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-label">تاريخ الإضافة</div>
-          <div id="bookAddedDate">01/01/2023</div>
-        </div>
-      </div>
-    </div>
+  <div class="logo-container">
+    <img src="../image/20250429_000806(2).png" alt="لوجو " style="width: 300px;height:auto;">
   </div>
 
+  <section class="books-section">
+    <h2 class="section-title">الكتب التي قمت باستعارتها</h2>
+    <div id="borrowedBooksContainer" class="books-container">
+      <!-- الكتب المستعارة ستظهر هنا تلقائياً -->
+    </div>
+  </section>
+
   <footer>
-    © 2025 منصة كتابي - جميع الحقوق محفوظة
+    <div class="social-links">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+    <p>© 2025 منصة إدارة المكتبة. جميع الحقوق محفوظة.</p>
   </footer>
 
   <script>
-    // دالة لجلب معرّف الكتاب من URL
-    function getBookIdFromUrl() {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('id');
+    async function fetchBookById(id_book) {
+      try {
+        const res = await fetch(`/api/books/${id_book}`);
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {}
+      return null;
     }
 
-    // دالة لجلب تفاصيل الكتاب من localStorage
-    function fetchBookDetails(bookId) {
-      const books = JSON.parse(localStorage.getItem('books')) || [];
-      return books[bookId];
-    }
+    async function fetchBorrowedBooks() {
+      const token = localStorage.getItem('authToken');
+      const container = document.getElementById('borrowedBooksContainer');
+      container.innerHTML = "جاري التحميل ...";
 
-    // دالة لعرض تفاصيل الكتاب
-    function displayBookDetails() {
-      const bookId = getBookIdFromUrl();
-      if (bookId === null) {
-        alert('لم يتم العثور على الكتاب المطلوب');
-        window.location.href = 'books.html';
+      const response = await fetch('/api/my-borrows', {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+      if (!response.ok) {
+        container.innerHTML = "<div class='no-books'>حدث خطأ أثناء جلب البيانات</div>";
+        return;
+      }
+      const data = await response.json();
+      if (!data.data || data.data.length === 0) {
+        container.innerHTML = `
+          <div class="no-books">
+            <i class="fas fa-book-open" style="font-size: 50px; color: #ccc; margin-bottom: 15px;"></i>
+            <p>لا توجد كتب مستعارة حالياً</p>
+          </div>
+        `;
         return;
       }
 
-      const book = fetchBookDetails(bookId);
-      if (!book) {
-        alert('الكتاب غير موجود');
-        window.location.href = 'books.html';
-        return;
-      }
+      // استخدم Promise.all لجلب بيانات الكتب الناقصة
+      const cards = await Promise.all(data.data.map(async borrow => {
+        let book = null;
+        if (borrow.copy && borrow.copy.book) {
+          book = borrow.copy.book;
+        } else if (borrow.book) {
+          book = borrow.book;
+        } else if (borrow.id_book) {
+          book = await fetchBookById(borrow.id_book);
+        }
+        if (!book) {
+          return `
+            <div class="book-card">
+              <div class="book-details">
+                <div class="book-title">بيانات الكتاب غير متوفرة</div>
+              </div>
+            </div>
+          `;
+        }
+        // شرط زر التمديد
+        const duration = Number(borrow.duration);
+        const showExtendBtn =
+          (borrow.type === 'external' || borrow.type === 'online_return')
+          && !isNaN(duration)
+          && duration < 15;
+        return `
+          <div class="book-card">
+            <img src="${book.image_path || 'https://via.placeholder.com/300x250?text=لا+يوجد+غلاف'}"
+                 alt="${book.title}"
+                 class="book-cover">
+            <div class="book-details">
+              <div class="book-title">${book.title}</div>
+              <div class="book-author">${book.author || ''}</div>
+              <div class="borrow-info">
+                <div class="borrow-date">
+                  <span>تاريخ الاستعارة:</span>
+                  <span>${borrow.borrow_date || borrow.borrowed_at || ''}</span>
+                </div>
+                <div class="return-date">
+                  <span>موعد الإرجاع:</span>
+                  <span>${borrow.due_date || ''}</span>
+                </div>
+                <div class="status">
+                  <div class="status-row">
+                    <span>نوع الاستعارة:</span>
+                    <span>${borrow.type || ''}</span>
+                  </div>
+                  <div class="status-row">
+                    <span>الحالة:</span>
+                    <span>${borrow.status || ''}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="book-actions">
+                <a href="book_detail.html?id=${book.id || ''}" class="book-btn details-btn">
+                  <i class="fas fa-info-circle"></i> التفاصيل
+                </a>
+                ${showExtendBtn ? `
+                <button class="book-btn extend-btn"
+  onclick="extendBorrowPeriod('${borrow.id_pret}')">
+  <i class="fas fa-calendar-plus"></i> تمديد
+</button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }));
 
-      // تعبئة البيانات في الصفحة
-      document.getElementById('bookTitle').textContent = book.title || 'بدون عنوان';
-      document.getElementById('bookAuthor').textContent = book.author || 'مؤلف غير معروف';
-      document.getElementById('bookCategory').textContent = book.category || 'غير مصنف';
-      document.getElementById('bookYear').textContent = book.year || 'غير معروف';
-      document.getElementById('bookPages').textContent = book.pages ? `${book.pages} صفحة` : 'غير معروف';
-      document.getElementById('bookDescription').textContent = book.description || 'لا يوجد وصف متاح لهذا الكتاب';
-      document.getElementById('bookLanguage').textContent = book.language || 'العربية';
-      document.getElementById('bookPublisher').textContent = book.publisher || 'غير معروف';
-      document.getElementById('bookISBN').textContent = book.isbn || 'غير متاح';
-      document.getElementById('bookAddedDate').textContent = book.addedDate || 'غير معروف';
-
-      // حالة الكتاب
-      const statusElement = document.getElementById('bookStatus');
-      statusElement.textContent = book.status || 'غير معروف';
-      statusElement.className = book.status === 'متوفر' ? 'book-status available' : 'book-status unavailable';
-
-      // صورة الكتاب
-      if (book.image) {
-        document.getElementById('bookCover').src = book.image;
-      }
-
-      // زر الاستعارة
-      const borrowBtn = document.getElementById('borrowBtn');
-      if (book.status !== 'متوفر') {
-        borrowBtn.style.backgroundColor = '#ccc';
-        borrowBtn.style.cursor = 'not-allowed';
-        borrowBtn.onclick = (e) => e.preventDefault();
-        borrowBtn.innerHTML = '<i class="fas fa-times"></i> غير متاح للاستعارة';
-      }
+      container.innerHTML = cards.join('');
     }
 
-    // تحميل البيانات عند فتح الصفحة
-    window.onload = function() {
-      displayBookDetails();
-    };
+    // دالة التمديد: ترسل طلب تمديد فعلي للـ API
+    function extendBorrowPeriod(borrowId) {
+      if (!confirm('هل أنت متأكد أنك تريد طلب تمديد هذه الإعارة؟')) return;
+      const token = localStorage.getItem('authToken');
+      fetch(`/api/borrows/${borrowId}/extend`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        }
+      })
+      .then(async res => {
+        if (res.ok) {
+          alert('تم إرسال طلب التمديد بنجاح. في انتظار الموافقة.');
+          fetchBorrowedBooks();
+        } else {
+          const data = await res.json();
+          alert(data.message || 'حدث خطأ أثناء إرسال طلب التمديد');
+        }
+      })
+      .catch(() => {
+        alert('حدث خطأ في الاتصال بالخادم');
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', fetchBorrowedBooks);
+
+    // إضافة أنيميشن للرسائل (اختياري)
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fadeOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(-20px); }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>

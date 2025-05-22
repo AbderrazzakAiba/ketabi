@@ -358,7 +358,18 @@ class BorrowController extends Controller
 
         return response()->json(['message' => 'Borrow deleted successfully.']);
     }
-
+  public function myBorrows(Request $request)
+{
+    $user = $request->user();
+    $borrows = $user->borrows()
+        ->with(['copy.book', 'book'])
+        ->whereIn('status', [
+            \App\Enums\BorrowStatus::ACTIVE,
+            \App\Enums\BorrowStatus::PENDING_EXTENSION
+        ])
+        ->get();
+    return \App\Http\Resources\BorrowResource::collection($borrows);
+}
     // Add methods for approving/rejecting borrow requests if a request/approval workflow is needed
     // public function approveBorrow(Borrow $borrow) { ... }
     // public function rejectBorrow(Borrow $borrow) { ... }

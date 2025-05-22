@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/borrows/{borrow}/extend', [BorrowController::class, 'requestExtension'])->name('borrow.extend');
     Route::put('/borrows/{borrow}', [BorrowController::class, 'update'])->name('borrow.update');
     Route::get('/borrows/{borrow}', [BorrowController::class, 'show'])->name('borrow.show');
-
+    Route::middleware('auth:sanctum')->get('/my-borrows', [BorrowController::class, 'myBorrows']);
     // Notification routes
     Route::get('/notifications', [\App\Http\Controllers\API\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications', [\App\Http\Controllers\API\NotificationController::class, 'store'])->name('notifications.store');

@@ -1,3 +1,4 @@
+<!-- filepath: d:\ketabi\resources\views\my-Book.blade.php -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -13,7 +14,6 @@
       --text-color: #30382F;
       --light-bg: #f5f7fa;
     }
-
     body {
       font-family: 'Tajawal', sans-serif;
       margin: 0;
@@ -23,7 +23,6 @@
       line-height: 1.6;
       scroll-behavior: smooth;
     }
-
     header {
       color: white;
       text-align: center;
@@ -50,19 +49,11 @@
       font-size: 45px;
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
-    header h1 {
-      margin: 0;
-      font-size: 45px;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-    }
-
     header p {
       margin: 15px 0;
       font-size: 20px;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
-
-    /* شريط التنقل المعدل */
     nav {
       background-color: white;
       display: flex;
@@ -74,7 +65,6 @@
       top: 0;
       z-index: 100;
     }
-
     nav a {
       color: var(--text-color);
       text-decoration: none;
@@ -83,19 +73,15 @@
       border-radius: 25px;
       transition: all 0.3s;
     }
-
     nav a:hover, nav a.active {
       background-color: var(--secondary-color);
       color: white;
       transform: translateY(-2px);
     }
-
-
     .books-section {
       padding: 20px;
       background-color: #f8f9fa;
     }
-
     .section-title {
       text-align: center;
       font-size: 28px;
@@ -105,53 +91,52 @@
       top: -150px;
       color: #5831d5;
     }
-
     .books-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 25px;
     }
-
     .book-card {
       background-color: white;
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       overflow: hidden;
       transition: all 0.3s ease;
-      height: 420px; /* زيادة الارتفاع لاستيعاب الأزرار الجديدة */
+      height: 560px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-
     .book-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
-
     .book-cover {
       width: 100%;
-      height: 200px;
+      height: 260px;
       object-fit: cover;
       transition: transform 0.3s;
+      display: block;
     }
-
     .book-card:hover .book-cover {
       transform: scale(1.03);
     }
-
     .book-details {
       padding: 15px;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
-
     .book-title {
       font-weight: bold;
       font-size: 18px;
       margin-bottom: 5px;
     }
-
     .book-author {
       color: #666;
       margin-bottom: 10px;
     }
-
     .borrow-info {
       margin-top: 15px;
       padding: 10px;
@@ -159,20 +144,24 @@
       border-radius: 5px;
       font-size: 14px;
     }
-
     .borrow-date, .return-date {
       display: flex;
       justify-content: space-between;
       margin-bottom: 5px;
     }
-
+    .status {
+      margin-top: 8px;
+      margin-bottom: 0;
+    }
+    .status-row {
+      margin-bottom: 3px;
+    }
     .book-actions {
       display: flex;
       gap: 10px;
       margin-top: 15px;
       flex-wrap: wrap;
     }
-
     .book-btn {
       flex: 1;
       min-width: 80px;
@@ -186,37 +175,30 @@
       border: none;
       font-family: 'Tajawal', sans-serif;
     }
-
     .details-btn {
       background-color: #f0f0f0;
       color: #333;
     }
-
     .details-btn:hover {
       background-color: #ddd;
       transform: translateY(-2px);
     }
-
     .return-btn {
       background-color: #dc3545;
       color: white;
     }
-
     .return-btn:hover {
       background-color: #c82333;
       transform: translateY(-2px);
     }
-
     .extend-btn {
       background-color: #28a745;
       color: white;
     }
-
     .extend-btn:hover {
       background-color: #218838;
       transform: translateY(-2px);
     }
-
     footer {
       text-align: center;
       padding: 30px;
@@ -224,7 +206,6 @@
       color: white;
       margin-top: 50px;
     }
-
     .no-books {
       grid-column: 1 / -1;
       text-align: center;
@@ -232,7 +213,6 @@
       font-size: 18px;
       color: #666;
     }
-
     .logo-container {
       display: flex;
       justify-content: center;
@@ -240,37 +220,35 @@
       flex-direction: column;
       margin: -50px auto 30px auto;
     }
-
-    /* تحسينات للهواتف */
     @media (max-width: 768px) {
       header {
         height: 350px;
       }
-
       header h1 {
         font-size: 32px;
       }
-
       nav {
         flex-wrap: wrap;
         gap: 10px;
       }
-
       nav a {
         padding: 8px 15px;
         font-size: 14px;
       }
-
       .books-container {
         grid-template-columns: 1fr;
       }
-
       .book-actions {
         flex-direction: column;
       }
-
       .book-btn {
         width: 100%;
+      }
+      .book-card {
+        height: 620px;
+      }
+      .book-cover {
+        height: 200px;
       }
     }
   </style>
@@ -285,7 +263,6 @@
     </div>
   </header>
 
-  <!-- شريط التنقل المعدل -->
   <nav>
     <a href="{{ route('home') }}">الصفحة الرئيسية</a>
     <a href="{{ route('books.index') }}">قائمة الكتب</a>
@@ -315,43 +292,32 @@
   </footer>
 
   <script>
-    // بيانات أولية للكتب المستعارة
-    const initialBorrowedBooks = [
-      {
-        id: "1",
-        title: "فن اللامبالاة",
-        author: "مارك مانسون",
-        image: "https://via.placeholder.com/300x200?text=فن+اللامبالاة",
-        borrowDate: "2023-05-15",
-        returnDate: "2023-06-15",
-        status: "مستعارة",
-        canExtend: true
-      },
-      {
-        id: "2",
-        title: "العادات الذرية",
-        author: "جيمس كلير",
-        image: "https://via.placeholder.com/300x200?text=العادات+الذرية",
-        borrowDate: "2023-06-01",
-        returnDate: "2023-07-01",
-        status: "مستعارة",
-        canExtend: false
-      }
-    ];
-
-    // تهيئة البيانات
-    function initializeBorrowedBooks() {
-      if (!localStorage.getItem('borrowedBooks') || JSON.parse(localStorage.getItem('borrowedBooks')).length === 0) {
-        localStorage.setItem('borrowedBooks', JSON.stringify(initialBorrowedBooks));
-      }
+    async function fetchBookById(id_book) {
+      try {
+        const res = await fetch(`/api/books/${id_book}`);
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {}
+      return null;
     }
 
-    // عرض الكتب المستعارة
-    function displayBorrowedBooks() {
+    async function fetchBorrowedBooks() {
+      const token = localStorage.getItem('authToken');
       const container = document.getElementById('borrowedBooksContainer');
-      const borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
+      container.innerHTML = "جاري التحميل ...";
 
-      if (borrowedBooks.length === 0) {
+      const response = await fetch('/api/my-borrows', {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+      if (!response.ok) {
+        container.innerHTML = "<div class='no-books'>حدث خطأ أثناء جلب البيانات</div>";
+        return;
+      }
+      const data = await response.json();
+      if (!data.data || data.data.length === 0) {
         container.innerHTML = `
           <div class="no-books">
             <i class="fas fa-book-open" style="font-size: 50px; color: #ccc; margin-bottom: 15px;"></i>
@@ -361,149 +327,106 @@
         return;
       }
 
-      container.innerHTML = borrowedBooks.map(book => `
-        <div class="book-card" data-id="${book.id}">
-          <img src="${book.image || 'https://via.placeholder.com/300x250?text=لا+يوجد+غلاف'}"
-               alt="${book.title}"
-               class="book-cover">
-          <div class="book-details">
-            <div class="book-title">${book.title}</div>
-            <div class="book-author">${book.author}</div>
-
-            <div class="borrow-info">
-              <div class="borrow-date">
-                <span>تاريخ الاستعارة:</span>
-                <span>${book.borrowDate}</span>
-              </div>
-              <div class="return-date">
-                <span>موعد الإرجاع:</span>
-                <span>${book.returnDate}</span>
-              </div>
-              <div class="status">
-                <span>الحالة:</span>
-                <span>${book.status}</span>
+      // استخدم Promise.all لجلب بيانات الكتب الناقصة
+      const cards = await Promise.all(data.data.map(async borrow => {
+        let book = null;
+        if (borrow.copy && borrow.copy.book) {
+          book = borrow.copy.book;
+        } else if (borrow.book) {
+          book = borrow.book;
+        } else if (borrow.id_book) {
+          book = await fetchBookById(borrow.id_book);
+        }
+        if (!book) {
+          return `
+            <div class="book-card">
+              <div class="book-details">
+                <div class="book-title">بيانات الكتاب غير متوفرة</div>
               </div>
             </div>
-
-            <div class="book-actions">
-              <a href="book_detail.html?id=${book.id}" class="book-btn details-btn">
-                <i class="fas fa-info-circle"></i> التفاصيل
-              </a>
-              <button class="book-btn extend-btn" onclick="extendBorrowPeriod('${book.id}')" ${book.canExtend ? '' : 'disabled style="opacity:0.6; cursor:not-allowed;"'}>
-                <i class="fas fa-calendar-plus"></i> تمديد
-              </button>
+          `;
+        }
+        // شرط زر التمديد
+        const duration = Number(borrow.duration);
+        const showExtendBtn =
+          (borrow.type === 'external' || borrow.type === 'online_return')
+          && !isNaN(duration)
+          && duration < 15;
+        return `
+          <div class="book-card">
+            <img src="${book.image_path || 'https://via.placeholder.com/300x250?text=لا+يوجد+غلاف'}"
+                 alt="${book.title}"
+                 class="book-cover">
+            <div class="book-details">
+              <div class="book-title">${book.title}</div>
+              <div class="book-author">${book.author || ''}</div>
+              <div class="borrow-info">
+                <div class="borrow-date">
+                  <span>تاريخ الاستعارة:</span>
+                  <span>${borrow.borrow_date || borrow.borrowed_at || ''}</span>
+                </div>
+                <div class="return-date">
+                  <span>موعد الإرجاع:</span>
+                  <span>${borrow.due_date || ''}</span>
+                </div>
+                <div class="status">
+                  <div class="status-row">
+                    <span>نوع الاستعارة:</span>
+                    <span>${borrow.type || ''}</span>
+                  </div>
+                  <div class="status-row">
+                    <span>الحالة:</span>
+                    <span>${borrow.status || ''}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="book-actions">
+                <a href="/books/${book.id || ''}" class="book-btn details-btn">
+                  <i class="fas fa-info-circle"></i> التفاصيل
+                </a>
+                ${showExtendBtn ? `
+                <button class="book-btn extend-btn"
+  onclick="extendBorrowPeriod('${borrow.id_pret}')">
+  <i class="fas fa-calendar-plus"></i> تمديد
+</button>
+                ` : ''}
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }));
+
+      container.innerHTML = cards.join('');
     }
 
-    // إرجاع الكتاب
-    function returnBook(bookId) {
-      if (confirm('هل أنت متأكد من رغبتك في إرجاع هذا الكتاب؟')) {
-        try {
-          let borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
-          borrowedBooks = borrowedBooks.filter(book => book.id !== bookId);
-          localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-
-          updateMainBookStatus(bookId, 'متوفر');
-          displayBorrowedBooks();
-
-          showAlert('تم إرجاع الكتاب بنجاح', 'success');
-        } catch (error) {
-          console.error('حدث خطأ أثناء إرجاع الكتاب:', error);
-          showAlert('حدث خطأ أثناء إرجاع الكتاب', 'error');
+    // دالة التمديد: ترسل طلب تمديد فعلي للـ API
+    function extendBorrowPeriod(borrowId) {
+      if (!confirm('هل أنت متأكد أنك تريد طلب تمديد هذه الإعارة؟')) return;
+      const token = localStorage.getItem('authToken');
+      fetch(`/api/borrows/${borrowId}/extend`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
         }
-      }
+      })
+      .then(async res => {
+        if (res.ok) {
+          alert('تم إرسال طلب التمديد بنجاح. في انتظار الموافقة.');
+          fetchBorrowedBooks();
+        } else {
+          const data = await res.json();
+          alert(data.message || 'حدث خطأ أثناء إرسال طلب التمديد');
+        }
+      })
+      .catch(() => {
+        alert('حدث خطأ في الاتصال بالخادم');
+      });
     }
 
-    // تمديد مدة الاستعارة
-    function extendBorrowPeriod(bookId) {
-      const borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
-      const bookIndex = borrowedBooks.findIndex(book => book.id === bookId);
+    window.addEventListener('DOMContentLoaded', fetchBorrowedBooks);
 
-      if (bookIndex === -1) {
-        showAlert('لم يتم العثور على الكتاب', 'error');
-        return;
-      }
-
-      const book = borrowedBooks[bookIndex];
-
-      if (!book.canExtend) {
-        showAlert('لا يمكن تمديد مدة استعارة هذا الكتاب', 'error');
-        return;
-      }
-
-      // حساب التاريخ الجديد (إضافة 14 يومًا)
-      const currentReturnDate = new Date(book.returnDate);
-      currentReturnDate.setDate(currentReturnDate.getDate() + 14);
-
-      const newReturnDate = currentReturnDate.toISOString().split('T')[0];
-
-      // تحديث بيانات الكتاب
-      borrowedBooks[bookIndex] = {
-        ...book,
-        returnDate: newReturnDate,
-        canExtend: false // منع التمديد مرة أخرى
-      };
-
-      localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-      displayBorrowedBooks();
-      showAlert('تم تمديد مدة الاستعارة بنجاح حتى ' + newReturnDate, 'success');
-    }
-
-    // تحديث حالة الكتاب في القائمة الرئيسية
-    function updateMainBookStatus(bookId, newStatus) {
-      try {
-        const allBooks = JSON.parse(localStorage.getItem('books')) || [];
-        const updatedBooks = allBooks.map(book => {
-          if (book.id === bookId) {
-            return {...book, status: newStatus};
-          }
-          return book;
-        });
-        localStorage.setItem('books', JSON.stringify(updatedBooks));
-      } catch (error) {
-        console.error('حدث خطأ أثناء تحديث حالة الكتاب:', error);
-      }
-    }
-
-    // عرض رسالة تنبيه
-    function showAlert(message, type) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type}`;
-      alertDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px;
-        border-radius: 5px;
-        background-color: ${type === 'success' ? '#d4edda' : '#f8d7da'};
-        color: ${type === 'success' ? '#155724' : '#721c24'};
-        border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'};
-        z-index: 1000;
-        animation: fadeIn 0.3s;
-      `;
-      alertDiv.innerHTML = `
-        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-        ${message}
-      `;
-
-      document.body.appendChild(alertDiv);
-
-      setTimeout(() => {
-        alertDiv.style.animation = 'fadeOut 0.3s';
-        setTimeout(() => alertDiv.remove(), 300);
-      }, 3000);
-    }
-
-    // تحميل الصفحة
-    window.addEventListener('DOMContentLoaded', () => {
-      initializeBorrowedBooks();
-      displayBorrowedBooks();
-    });
-
-    // إضافة أنيميشن للرسائل
+    // إضافة أنيميشن للرسائل (اختياري)
     const style = document.createElement('style');
     style.innerHTML = `
       @keyframes fadeIn {

@@ -12,20 +12,25 @@ class BorrowResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
-    {
-        return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'copy_id' => $this->copy_id,
-            'type' => $this->type,
-            'borrowed_at' => $this->borrowed_at,
-            'due_date' => $this->due_date,
-            'returned_at' => $this->returned_at,
-            'status' => $this->status,
-            // يمكنك إضافة أي بيانات إضافية مثل المستخدمين، الكتب، أو حالة النسخة
-            'user' => $this->user, // افتراضًا أنك ترغب في إرجاع معلومات المستخدم
-            'copy' => $this->copy, // إضافة النسخة المعارة
-        ];
-    }
+   public function toArray($request)
+{
+  return [
+        'id' => $this->id_pret, // استخدم id_pret بدلاً من id
+        'id_pret' => $this->id_pret,
+        'user_id' => $this->user_id,
+        'copy_id' => $this->copy_id,
+        'type' => $this->type,
+        'borrowed_at' => $this->borrow_date ? $this->borrow_date->format('Y-m-d') : null,
+        'due_date' => $this->due_date ? $this->due_date->format('Y-m-d') : null,
+        'returned_at' => $this->return_date ? $this->return_date->format('Y-m-d') : null,
+        'status' => $this->status,
+        'user' => $this->user,
+        'copy' => $this->copy,
+        'book' => $this->copy && $this->copy->book
+            ? $this->copy->book
+            : $this->book,
+        'duration' => $this->duration, // أضف هذا السطر
+        'original_duration' => $this->original_duration, // أضف هذا السطر أيضاً إذا أردت
+    ];
+}
 }

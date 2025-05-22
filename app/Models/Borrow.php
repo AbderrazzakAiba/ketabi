@@ -52,4 +52,9 @@ class Borrow extends Model
     {
         return $this->belongsTo(Copy::class, 'id_exemplaire', 'id_exemplaire'); // Correct keys
     }
+    public function book(): BelongsTo
+{
+    return $this->belongsTo(Book::class, 'id_book', 'id_book');
+}
+
 }
